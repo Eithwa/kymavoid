@@ -186,7 +186,7 @@ int main(int argc, char **argv)
             mpathplan.setTeam(Team_color);
             mpathplan.personalStrategy(global_env->RobotNumber,/*4*/actionAry[global_env->RobotNumber]);
         }
-
+        
 
         //===set env===//
         Environment* tEnv = mpathplan.getEnv();
@@ -219,7 +219,6 @@ int main(int argc, char **argv)
         }
 
         // printf("robot=%ld\n",global_env->robotnumber);
-
         mNodeHandle.pubGrpSpeed();
         ros::spinOnce();
         loop_rate.sleep();

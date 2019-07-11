@@ -150,6 +150,7 @@ foreach(
     interface
     monitor
     white_line
+    blackItem
     black_item
 )
 add_subdirectory(${subdir})

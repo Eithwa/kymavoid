@@ -1,25 +1,25 @@
 AvoidChallenge:
   ChooseSide: [0, 1, 0.05, 0.04]
   Distant: [60, 90, 250]
-  FinalAngle: 81.06299225118552
-  GoodAngle: 80.0
+  FinalAngle: 53.0
+  GoodAngle: 53.0
   GraySet: 10
   IsSimulator: [0]
   Line: [18, 5, 6, 6, 5, 5, 8]
-  SPlanning_Velocity: [100, 0.3, 30, 30, 3, 3, 144, 5]
-  avoid_go: 1
-  dd_1: 90
-  dd_2: 71
-  df_1: 90
-  df_2: 61
-  far_good_angle: 73.0
+  SPlanning_Velocity: [100, 0.3, 5, 5, 3, 3, 144, 5]
+  avoid_go: 0
+  dd_1: 71
+  dd_2: 35
+  df_1: 71
+  df_2: 40
+  far_good_angle: 60.0
   kd: 0
   ki: 0
   kp: 1
 FIRA:
   Attack_Strategy: [0]
-  Camera: {Focal: 13.005529372471889, High: 650.0}
-  Center: {Front: 270, Inner: 42, Outer: 236, X: 285, Y: 233}
+  Camera: {Focal: 15.025845950801042, High: 650.0}
+  Center: {Front: 330, Inner: 46, Outer: 276, X: 297, Y: 267}
   Chase_Strategy: [0]
   Corner_Kick: [1.2, 60, 90, 50]
   Distance:
@@ -31,7 +31,7 @@ FIRA:
   HSV:
     Bluerange: [360, 0, 255, 0, 255, 0]
     Greenrange: [360, 0, 255, 0, 255, 0]
-    Redrange: [61, 250, 241, 0, 215, 11]
+    Redrange: [36, 301, 172, 71, 212, 54]
     Whiterange: [360, 0, 255, 0, 255, 0]
     Yellowrange: [360, 0, 255, 0, 255, 0]
   RobotNumber: 1
@@ -1446,8 +1446,8 @@ FIRA:
   TypeS_Attack: [1.2, 0.2]
   TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
   Zone_Attack: [0.87, 1.55]
-  blackItem: {angle: 3, gray: 21}
-  gray_ave: 9
+  blackItem: {angle: 3, gray: 54}
+  gray_ave: 23
   picture_m: 576
   whiteline: {angle: 4, gray: 100}
 FIRA_Behavior:
@@ -1459,28 +1459,13 @@ FIRA_Behavior:
   TypeU_Chase: [30, 0.3]
   Zone_Attack: [0.6]
 StrategySelection: [0, 1, 0, 0, 1, 0]
-auto_adjust_stream_bytes_per_second: true
-auto_exposure: false
-auto_gain: false
-auto_whitebalance: false
-binning_x: 1
-binning_y: 1
 camera:
   image_raw:
     compressed: {format: jpeg, jpeg_quality: 80, png_level: 9}
     compressedDepth: {depth_max: 10.0, depth_quantization: 100.0, png_level: 9}
     theora: {keyframe_frequency: 64, optimize_for: 1, quality: 31, target_bitrate: 800000}
-exposure: 0.025
-exposure_auto_max: 0.5
-exposure_auto_target: 50
-fixed_rate: 15.0
-frame_id: ''
-gain: 0
-gain_auto_max: 19
-gain_auto_target: 50
-height: 480
 prosilica_driver: {auto_adjust_stream_bytes_per_second: true, auto_exposure: false,
-  auto_gain: false, auto_whitebalance: false, binning_x: 1, binning_y: 1, exposure: 0.016666,
+  auto_gain: false, auto_whitebalance: false, binning_x: 1, binning_y: 1, exposure: 0.020408,
   exposure_auto_max: 0.5, exposure_auto_target: 50, fixed_rate: 15.0, frame_id: '',
   gain: 0, gain_auto_max: 19, gain_auto_target: 50, height: 480, stream_bytes_per_second: 45000000,
   trig_rate: 15.0, trig_timestamp_topic: '', trigger_mode: streaming, whitebalance_blue: 100,
@@ -1491,220 +1476,13 @@ rosdistro: 'indigo
 
   '
 roslaunch:
-  uris: {host_127_0_0_1__32985: 'http://127.0.0.1:32985/', host_127_0_0_1__33234: 'http://127.0.0.1:33234/',
-    host_127_0_0_1__34990: 'http://127.0.0.1:34990/', host_127_0_0_1__36640: 'http://127.0.0.1:36640/',
-    host_127_0_0_1__37999: 'http://127.0.0.1:37999/', host_127_0_0_1__39324: 'http://127.0.0.1:39324/',
-    host_127_0_0_1__39483: 'http://127.0.0.1:39483/', host_127_0_0_1__41992: 'http://127.0.0.1:41992/',
-    host_127_0_0_1__42091: 'http://127.0.0.1:42091/', host_127_0_0_1__42467: 'http://127.0.0.1:42467/',
-    host_127_0_0_1__42984: 'http://127.0.0.1:42984/', host_127_0_0_1__43434: 'http://127.0.0.1:43434/',
-    host_127_0_0_1__43728: 'http://127.0.0.1:43728/', host_127_0_0_1__45300: 'http://127.0.0.1:45300/',
-    host_127_0_0_1__45302: 'http://127.0.0.1:45302/', host_127_0_0_1__48757: 'http://127.0.0.1:48757/',
-    host_127_0_0_1__49099: 'http://127.0.0.1:49099/', host_127_0_0_1__49210: 'http://127.0.0.1:49210/',
-    host_127_0_0_1__50057: 'http://127.0.0.1:50057/', host_127_0_0_1__50106: 'http://127.0.0.1:50106/',
-    host_127_0_0_1__51590: 'http://127.0.0.1:51590/', host_127_0_0_1__57382: 'http://127.0.0.1:57382/',
-    host_127_0_0_1__57994: 'http://127.0.0.1:57994/', host_127_0_0_1__58973: 'http://127.0.0.1:58973/',
-    host_127_0_0_1__59484: 'http://127.0.0.1:59484/', host_allen_virtual_machine__32888: 'http://allen-virtual-machine:32888/',
-    host_allen_virtual_machine__33017: 'http://allen-virtual-machine:33017/', host_allen_virtual_machine__33329: 'http://allen-virtual-machine:33329/',
-    host_allen_virtual_machine__33635: 'http://allen-virtual-machine:33635/', host_allen_virtual_machine__34281: 'http://allen-virtual-machine:34281/',
-    host_allen_virtual_machine__34380: 'http://allen-virtual-machine:34380/', host_allen_virtual_machine__35869: 'http://allen-virtual-machine:35869/',
-    host_allen_virtual_machine__36974: 'http://allen-virtual-machine:36974/', host_allen_virtual_machine__37022: 'http://allen-virtual-machine:37022/',
-    host_allen_virtual_machine__37416: 'http://allen-virtual-machine:37416/', host_allen_virtual_machine__37607: 'http://allen-virtual-machine:37607/',
-    host_allen_virtual_machine__38247: 'http://allen-virtual-machine:38247/', host_allen_virtual_machine__39519: 'http://allen-virtual-machine:39519/',
-    host_allen_virtual_machine__40306: 'http://allen-virtual-machine:40306/', host_allen_virtual_machine__41047: 'http://allen-virtual-machine:41047/',
-    host_allen_virtual_machine__41277: 'http://allen-virtual-machine:41277/', host_allen_virtual_machine__42035: 'http://allen-virtual-machine:42035/',
-    host_allen_virtual_machine__42110: 'http://allen-virtual-machine:42110/', host_allen_virtual_machine__42345: 'http://allen-virtual-machine:42345/',
-    host_allen_virtual_machine__42637: 'http://allen-virtual-machine:42637/', host_allen_virtual_machine__43559: 'http://allen-virtual-machine:43559/',
-    host_allen_virtual_machine__43652: 'http://allen-virtual-machine:43652/', host_allen_virtual_machine__43656: 'http://allen-virtual-machine:43656/',
-    host_allen_virtual_machine__43735: 'http://allen-virtual-machine:43735/', host_allen_virtual_machine__43973: 'http://allen-virtual-machine:43973/',
-    host_allen_virtual_machine__45022: 'http://allen-virtual-machine:45022/', host_allen_virtual_machine__45120: 'http://allen-virtual-machine:45120/',
-    host_allen_virtual_machine__45476: 'http://allen-virtual-machine:45476/', host_allen_virtual_machine__45829: 'http://allen-virtual-machine:45829/',
-    host_allen_virtual_machine__45929: 'http://allen-virtual-machine:45929/', host_allen_virtual_machine__46630: 'http://allen-virtual-machine:46630/',
-    host_allen_virtual_machine__47175: 'http://allen-virtual-machine:47175/', host_allen_virtual_machine__47361: 'http://allen-virtual-machine:47361/',
-    host_allen_virtual_machine__48153: 'http://allen-virtual-machine:48153/', host_allen_virtual_machine__48269: 'http://allen-virtual-machine:48269/',
-    host_allen_virtual_machine__49083: 'http://allen-virtual-machine:49083/', host_allen_virtual_machine__49271: 'http://allen-virtual-machine:49271/',
-    host_allen_virtual_machine__49600: 'http://allen-virtual-machine:49600/', host_allen_virtual_machine__50280: 'http://allen-virtual-machine:50280/',
-    host_allen_virtual_machine__51159: 'http://allen-virtual-machine:51159/', host_allen_virtual_machine__51222: 'http://allen-virtual-machine:51222/',
-    host_allen_virtual_machine__51319: 'http://allen-virtual-machine:51319/', host_allen_virtual_machine__52112: 'http://allen-virtual-machine:52112/',
-    host_allen_virtual_machine__52352: 'http://allen-virtual-machine:52352/', host_allen_virtual_machine__52508: 'http://allen-virtual-machine:52508/',
-    host_allen_virtual_machine__52973: 'http://allen-virtual-machine:52973/', host_allen_virtual_machine__53451: 'http://allen-virtual-machine:53451/',
-    host_allen_virtual_machine__56412: 'http://allen-virtual-machine:56412/', host_allen_virtual_machine__56904: 'http://allen-virtual-machine:56904/',
-    host_allen_virtual_machine__57016: 'http://allen-virtual-machine:57016/', host_allen_virtual_machine__57266: 'http://allen-virtual-machine:57266/',
-    host_allen_virtual_machine__57680: 'http://allen-virtual-machine:57680/', host_allen_virtual_machine__57740: 'http://allen-virtual-machine:57740/',
-    host_allen_virtual_machine__59496: 'http://allen-virtual-machine:59496/', host_allen_virtual_machine__60199: 'http://allen-virtual-machine:60199/',
-    host_allen_virtual_machine__60685: 'http://allen-virtual-machine:60685/', host_allen_virtual_machine__60734: 'http://allen-virtual-machine:60734/',
-    host_erebuszz_parallels_virtual_platform__39722: 'http://erebuszz-Parallels-Virtual-Platform:39722/',
-    host_erebuszz_parallels_virtual_platform__44185: 'http://erebuszz-Parallels-Virtual-Platform:44185/',
-    host_erebuszz_parallels_virtual_platform__55975: 'http://erebuszz-Parallels-Virtual-Platform:55975/',
-    host_iclab__33262: 'http://iclab:33262/', host_iclab__33519: 'http://iclab:33519/',
-    host_iclab__33650: 'http://iclab:33650/', host_iclab__34122: 'http://iclab:34122/',
-    host_iclab__35732: 'http://iclab:35732/', host_iclab__35908: 'http://iclab:35908/',
-    host_iclab__36197: 'http://iclab:36197/', host_iclab__36243: 'http://iclab:36243/',
-    host_iclab__37604: 'http://iclab:37604/', host_iclab__37775: 'http://iclab:37775/',
-    host_iclab__38703: 'http://iclab:38703/', host_iclab__39088: 'http://iclab:39088/',
-    host_iclab__39429: 'http://iclab:39429/', host_iclab__39516: 'http://iclab:39516/',
-    host_iclab__39608: 'http://iclab:39608/', host_iclab__40412: 'http://iclab:40412/',
-    host_iclab__40609: 'http://iclab:40609/', host_iclab__41334: 'http://iclab:41334/',
-    host_iclab__41476: 'http://iclab:41476/', host_iclab__41532: 'http://iclab:41532/',
-    host_iclab__42164: 'http://iclab:42164/', host_iclab__42244: 'http://iclab:42244/',
-    host_iclab__42479: 'http://iclab:42479/', host_iclab__43229: 'http://iclab:43229/',
-    host_iclab__43319: 'http://iclab:43319/', host_iclab__43837: 'http://iclab:43837/',
-    host_iclab__43952: 'http://iclab:43952/', host_iclab__44004: 'http://iclab:44004/',
-    host_iclab__44032: 'http://iclab:44032/', host_iclab__44620: 'http://iclab:44620/',
-    host_iclab__44632: 'http://iclab:44632/', host_iclab__45267: 'http://iclab:45267/',
-    host_iclab__45666: 'http://iclab:45666/', host_iclab__45925: 'http://iclab:45925/',
-    host_iclab__46070: 'http://iclab:46070/', host_iclab__46226: 'http://iclab:46226/',
-    host_iclab__46288: 'http://iclab:46288/', host_iclab__46544: 'http://iclab:46544/',
-    host_iclab_desktop__32798: 'http://iclab-desktop:32798/', host_iclab_desktop__32810: 'http://iclab-desktop:32810/',
-    host_iclab_desktop__32839: 'http://iclab-desktop:32839/', host_iclab_desktop__32879: 'http://iclab-desktop:32879/',
-    host_iclab_desktop__32931: 'http://iclab-desktop:32931/', host_iclab_desktop__32958: 'http://iclab-desktop:32958/',
-    host_iclab_desktop__33020: 'http://iclab-desktop:33020/', host_iclab_desktop__33100: 'http://iclab-desktop:33100/',
-    host_iclab_desktop__33165: 'http://iclab-desktop:33165/', host_iclab_desktop__33194: 'http://iclab-desktop:33194/',
-    host_iclab_desktop__33315: 'http://iclab-desktop:33315/', host_iclab_desktop__33429: 'http://iclab-desktop:33429/',
-    host_iclab_desktop__33554: 'http://iclab-desktop:33554/', host_iclab_desktop__33674: 'http://iclab-desktop:33674/',
-    host_iclab_desktop__33704: 'http://iclab-desktop:33704/', host_iclab_desktop__33717: 'http://iclab-desktop:33717/',
-    host_iclab_desktop__33749: 'http://iclab-desktop:33749/', host_iclab_desktop__33965: 'http://iclab-desktop:33965/',
-    host_iclab_desktop__33991: 'http://iclab-desktop:33991/', host_iclab_desktop__34168: 'http://iclab-desktop:34168/',
-    host_iclab_desktop__34368: 'http://iclab-desktop:34368/', host_iclab_desktop__34413: 'http://iclab-desktop:34413/',
-    host_iclab_desktop__34416: 'http://iclab-desktop:34416/', host_iclab_desktop__34423: 'http://iclab-desktop:34423/',
-    host_iclab_desktop__34433: 'http://iclab-desktop:34433/', host_iclab_desktop__34519: 'http://iclab-desktop:34519/',
-    host_iclab_desktop__34731: 'http://iclab-desktop:34731/', host_iclab_desktop__34817: 'http://iclab-desktop:34817/',
-    host_iclab_desktop__34856: 'http://iclab-desktop:34856/', host_iclab_desktop__34927: 'http://iclab-desktop:34927/',
-    host_iclab_desktop__34942: 'http://iclab-desktop:34942/', host_iclab_desktop__34945: 'http://iclab-desktop:34945/',
-    host_iclab_desktop__35045: 'http://iclab-desktop:35045/', host_iclab_desktop__35111: 'http://iclab-desktop:35111/',
-    host_iclab_desktop__35307: 'http://iclab-desktop:35307/', host_iclab_desktop__35419: 'http://iclab-desktop:35419/',
-    host_iclab_desktop__35632: 'http://iclab-desktop:35632/', host_iclab_desktop__35638: 'http://iclab-desktop:35638/',
-    host_iclab_desktop__35669: 'http://iclab-desktop:35669/', host_iclab_desktop__35752: 'http://iclab-desktop:35752/',
-    host_iclab_desktop__35985: 'http://iclab-desktop:35985/', host_iclab_desktop__36059: 'http://iclab-desktop:36059/',
-    host_iclab_desktop__36076: 'http://iclab-desktop:36076/', host_iclab_desktop__36299: 'http://iclab-desktop:36299/',
-    host_iclab_desktop__36332: 'http://iclab-desktop:36332/', host_iclab_desktop__36417: 'http://iclab-desktop:36417/',
-    host_iclab_desktop__36539: 'http://iclab-desktop:36539/', host_iclab_desktop__36708: 'http://iclab-desktop:36708/',
-    host_iclab_desktop__36751: 'http://iclab-desktop:36751/', host_iclab_desktop__36853: 'http://iclab-desktop:36853/',
-    host_iclab_desktop__36877: 'http://iclab-desktop:36877/', host_iclab_desktop__36920: 'http://iclab-desktop:36920/',
-    host_iclab_desktop__36964: 'http://iclab-desktop:36964/', host_iclab_desktop__36969: 'http://iclab-desktop:36969/',
-    host_iclab_desktop__36984: 'http://iclab-desktop:36984/', host_iclab_desktop__36985: 'http://iclab-desktop:36985/',
-    host_iclab_desktop__37086: 'http://iclab-desktop:37086/', host_iclab_desktop__37281: 'http://iclab-desktop:37281/',
-    host_iclab_desktop__37291: 'http://iclab-desktop:37291/', host_iclab_desktop__37558: 'http://iclab-desktop:37558/',
-    host_iclab_desktop__37559: 'http://iclab-desktop:37559/', host_iclab_desktop__37587: 'http://iclab-desktop:37587/',
-    host_iclab_desktop__37635: 'http://iclab-desktop:37635/', host_iclab_desktop__37732: 'http://iclab-desktop:37732/',
-    host_iclab_desktop__37771: 'http://iclab-desktop:37771/', host_iclab_desktop__37850: 'http://iclab-desktop:37850/',
-    host_iclab_desktop__37905: 'http://iclab-desktop:37905/', host_iclab_desktop__37952: 'http://iclab-desktop:37952/',
-    host_iclab_desktop__38001: 'http://iclab-desktop:38001/', host_iclab_desktop__38153: 'http://iclab-desktop:38153/',
-    host_iclab_desktop__38155: 'http://iclab-desktop:38155/', host_iclab_desktop__38193: 'http://iclab-desktop:38193/',
-    host_iclab_desktop__38314: 'http://iclab-desktop:38314/', host_iclab_desktop__38329: 'http://iclab-desktop:38329/',
-    host_iclab_desktop__38498: 'http://iclab-desktop:38498/', host_iclab_desktop__38594: 'http://iclab-desktop:38594/',
-    host_iclab_desktop__38806: 'http://iclab-desktop:38806/', host_iclab_desktop__38813: 'http://iclab-desktop:38813/',
-    host_iclab_desktop__38896: 'http://iclab-desktop:38896/', host_iclab_desktop__38960: 'http://iclab-desktop:38960/',
-    host_iclab_desktop__39017: 'http://iclab-desktop:39017/', host_iclab_desktop__39022: 'http://iclab-desktop:39022/',
-    host_iclab_desktop__39036: 'http://iclab-desktop:39036/', host_iclab_desktop__39267: 'http://iclab-desktop:39267/',
-    host_iclab_desktop__39296: 'http://iclab-desktop:39296/', host_iclab_desktop__39297: 'http://iclab-desktop:39297/',
-    host_iclab_desktop__39449: 'http://iclab-desktop:39449/', host_iclab_desktop__39487: 'http://iclab-desktop:39487/',
-    host_iclab_desktop__39522: 'http://iclab-desktop:39522/', host_iclab_desktop__39591: 'http://iclab-desktop:39591/',
-    host_iclab_desktop__39592: 'http://iclab-desktop:39592/', host_iclab_desktop__39614: 'http://iclab-desktop:39614/',
-    host_iclab_desktop__39717: 'http://iclab-desktop:39717/', host_iclab_desktop__40099: 'http://iclab-desktop:40099/',
-    host_iclab_desktop__40172: 'http://iclab-desktop:40172/', host_iclab_desktop__40179: 'http://iclab-desktop:40179/',
-    host_iclab_desktop__40225: 'http://iclab-desktop:40225/', host_iclab_desktop__40247: 'http://iclab-desktop:40247/',
-    host_iclab_desktop__40291: 'http://iclab-desktop:40291/', host_iclab_desktop__40571: 'http://iclab-desktop:40571/',
-    host_iclab_desktop__40574: 'http://iclab-desktop:40574/', host_iclab_desktop__40853: 'http://iclab-desktop:40853/',
-    host_iclab_desktop__40887: 'http://iclab-desktop:40887/', host_iclab_desktop__40917: 'http://iclab-desktop:40917/',
-    host_iclab_desktop__41026: 'http://iclab-desktop:41026/', host_iclab_desktop__41028: 'http://iclab-desktop:41028/',
-    host_iclab_desktop__41057: 'http://iclab-desktop:41057/', host_iclab_desktop__41083: 'http://iclab-desktop:41083/',
-    host_iclab_desktop__41114: 'http://iclab-desktop:41114/', host_iclab_desktop__41169: 'http://iclab-desktop:41169/',
-    host_iclab_desktop__41174: 'http://iclab-desktop:41174/', host_iclab_desktop__41242: 'http://iclab-desktop:41242/',
-    host_iclab_desktop__41244: 'http://iclab-desktop:41244/', host_iclab_desktop__41258: 'http://iclab-desktop:41258/',
-    host_iclab_desktop__41334: 'http://iclab-desktop:41334/', host_iclab_desktop__41389: 'http://iclab-desktop:41389/',
-    host_iclab_desktop__41398: 'http://iclab-desktop:41398/', host_iclab_desktop__41606: 'http://iclab-desktop:41606/',
-    host_iclab_desktop__41683: 'http://iclab-desktop:41683/', host_iclab_desktop__41689: 'http://iclab-desktop:41689/',
-    host_iclab_desktop__41699: 'http://iclab-desktop:41699/', host_iclab_desktop__41702: 'http://iclab-desktop:41702/',
-    host_iclab_desktop__41799: 'http://iclab-desktop:41799/', host_iclab_desktop__41806: 'http://iclab-desktop:41806/',
-    host_iclab_desktop__41827: 'http://iclab-desktop:41827/', host_iclab_desktop__41835: 'http://iclab-desktop:41835/',
-    host_iclab_desktop__41889: 'http://iclab-desktop:41889/', host_iclab_desktop__41994: 'http://iclab-desktop:41994/',
-    host_iclab_desktop__42044: 'http://iclab-desktop:42044/', host_iclab_desktop__42086: 'http://iclab-desktop:42086/',
-    host_iclab_desktop__42099: 'http://iclab-desktop:42099/', host_iclab_desktop__42235: 'http://iclab-desktop:42235/',
-    host_iclab_desktop__42400: 'http://iclab-desktop:42400/', host_iclab_desktop__42470: 'http://iclab-desktop:42470/',
-    host_iclab_desktop__42533: 'http://iclab-desktop:42533/', host_iclab_desktop__42543: 'http://iclab-desktop:42543/',
-    host_iclab_desktop__42635: 'http://iclab-desktop:42635/', host_iclab_desktop__42641: 'http://iclab-desktop:42641/',
-    host_iclab_desktop__42675: 'http://iclab-desktop:42675/', host_iclab_desktop__42998: 'http://iclab-desktop:42998/',
-    host_iclab_desktop__43247: 'http://iclab-desktop:43247/', host_iclab_desktop__43473: 'http://iclab-desktop:43473/',
-    host_iclab_desktop__43511: 'http://iclab-desktop:43511/', host_iclab_desktop__43545: 'http://iclab-desktop:43545/',
-    host_iclab_desktop__43578: 'http://iclab-desktop:43578/', host_iclab_desktop__43589: 'http://iclab-desktop:43589/',
-    host_iclab_desktop__43667: 'http://iclab-desktop:43667/', host_iclab_desktop__43749: 'http://iclab-desktop:43749/',
-    host_iclab_desktop__43906: 'http://iclab-desktop:43906/', host_iclab_desktop__43958: 'http://iclab-desktop:43958/',
-    host_iclab_desktop__44068: 'http://iclab-desktop:44068/', host_iclab_desktop__44303: 'http://iclab-desktop:44303/',
-    host_iclab_desktop__44344: 'http://iclab-desktop:44344/', host_iclab_desktop__44347: 'http://iclab-desktop:44347/',
-    host_iclab_desktop__44502: 'http://iclab-desktop:44502/', host_iclab_desktop__44528: 'http://iclab-desktop:44528/',
-    host_iclab_desktop__44532: 'http://iclab-desktop:44532/', host_iclab_desktop__44606: 'http://iclab-desktop:44606/',
-    host_iclab_desktop__44720: 'http://iclab-desktop:44720/', host_iclab_desktop__44730: 'http://iclab-desktop:44730/',
-    host_iclab_desktop__44794: 'http://iclab-desktop:44794/', host_iclab_desktop__45036: 'http://iclab-desktop:45036/',
-    host_iclab_desktop__45048: 'http://iclab-desktop:45048/', host_iclab_desktop__45050: 'http://iclab-desktop:45050/',
-    host_iclab_desktop__45051: 'http://iclab-desktop:45051/', host_iclab_desktop__45086: 'http://iclab-desktop:45086/',
-    host_iclab_desktop__45119: 'http://iclab-desktop:45119/', host_iclab_desktop__45555: 'http://iclab-desktop:45555/',
-    host_iclab_desktop__45697: 'http://iclab-desktop:45697/', host_iclab_desktop__45713: 'http://iclab-desktop:45713/',
-    host_iclab_desktop__45849: 'http://iclab-desktop:45849/', host_iclab_desktop__45867: 'http://iclab-desktop:45867/',
-    host_iclab_desktop__45875: 'http://iclab-desktop:45875/', host_iclab_desktop__45972: 'http://iclab-desktop:45972/',
-    host_iclab_desktop__45979: 'http://iclab-desktop:45979/', host_iclab_desktop__45988: 'http://iclab-desktop:45988/',
-    host_iclab_desktop__46107: 'http://iclab-desktop:46107/', host_iclab_desktop__46172: 'http://iclab-desktop:46172/',
-    host_iclab_desktop__46184: 'http://iclab-desktop:46184/', host_iclab_desktop__46222: 'http://iclab-desktop:46222/',
-    host_iclab_desktop__46306: 'http://iclab-desktop:46306/', host_iclab_desktop__46315: 'http://iclab-desktop:46315/',
-    host_iclab_desktop__46425: 'http://iclab-desktop:46425/', host_iclab_desktop__46473: 'http://iclab-desktop:46473/',
-    host_iclab_desktop__46627: 'http://iclab-desktop:46627/', host_iclab_desktop__46683: 'http://iclab-desktop:46683/',
-    host_iclab_desktop__46754: 'http://iclab-desktop:46754/', host_iclab_desktop__46784: 'http://iclab-desktop:46784/',
-    host_iclab_desktop__46807: 'http://iclab-desktop:46807/', host_iclab_desktop__46866: 'http://iclab-desktop:46866/',
-    host_iclab_desktop__46884: 'http://iclab-desktop:46884/', host_iclab_desktop__47063: 'http://iclab-desktop:47063/',
-    host_iclab_desktop__47201: 'http://iclab-desktop:47201/', host_iclab_desktop__47234: 'http://iclab-desktop:47234/',
-    host_iclab_desktop__47367: 'http://iclab-desktop:47367/', host_iclab_desktop__47558: 'http://iclab-desktop:47558/',
-    host_iclab_desktop__48034: 'http://iclab-desktop:48034/', host_iclab_desktop__48738: 'http://iclab-desktop:48738/',
-    host_iclab_desktop__48780: 'http://iclab-desktop:48780/', host_iclab_desktop__49101: 'http://iclab-desktop:49101/',
-    host_iclab_desktop__49169: 'http://iclab-desktop:49169/', host_iclab_desktop__49243: 'http://iclab-desktop:49243/',
-    host_iclab_desktop__49488: 'http://iclab-desktop:49488/', host_iclab_desktop__50177: 'http://iclab-desktop:50177/',
-    host_iclab_desktop__50721: 'http://iclab-desktop:50721/', host_iclab_desktop__50832: 'http://iclab-desktop:50832/',
-    host_iclab_desktop__51335: 'http://iclab-desktop:51335/', host_iclab_desktop__51520: 'http://iclab-desktop:51520/',
-    host_iclab_desktop__51524: 'http://iclab-desktop:51524/', host_iclab_desktop__51769: 'http://iclab-desktop:51769/',
-    host_iclab_desktop__51828: 'http://iclab-desktop:51828/', host_iclab_desktop__52049: 'http://iclab-desktop:52049/',
-    host_iclab_desktop__52128: 'http://iclab-desktop:52128/', host_iclab_desktop__52310: 'http://iclab-desktop:52310/',
-    host_iclab_desktop__52407: 'http://iclab-desktop:52407/', host_iclab_desktop__52427: 'http://iclab-desktop:52427/',
-    host_iclab_desktop__52429: 'http://iclab-desktop:52429/', host_iclab_desktop__52439: 'http://iclab-desktop:52439/',
-    host_iclab_desktop__52591: 'http://iclab-desktop:52591/', host_iclab_desktop__52617: 'http://iclab-desktop:52617/',
-    host_iclab_desktop__52732: 'http://iclab-desktop:52732/', host_iclab_desktop__52829: 'http://iclab-desktop:52829/',
-    host_iclab_desktop__52930: 'http://iclab-desktop:52930/', host_iclab_desktop__53132: 'http://iclab-desktop:53132/',
-    host_iclab_desktop__53154: 'http://iclab-desktop:53154/', host_iclab_desktop__53187: 'http://iclab-desktop:53187/',
-    host_iclab_desktop__53200: 'http://iclab-desktop:53200/', host_iclab_desktop__53609: 'http://iclab-desktop:53609/',
-    host_iclab_desktop__53922: 'http://iclab-desktop:53922/', host_iclab_desktop__54078: 'http://iclab-desktop:54078/',
-    host_iclab_desktop__54269: 'http://iclab-desktop:54269/', host_iclab_desktop__54318: 'http://iclab-desktop:54318/',
-    host_iclab_desktop__54458: 'http://iclab-desktop:54458/', host_iclab_desktop__54490: 'http://iclab-desktop:54490/',
-    host_iclab_desktop__54630: 'http://iclab-desktop:54630/', host_iclab_desktop__54664: 'http://iclab-desktop:54664/',
-    host_iclab_desktop__54682: 'http://iclab-desktop:54682/', host_iclab_desktop__54940: 'http://iclab-desktop:54940/',
-    host_iclab_desktop__55101: 'http://iclab-desktop:55101/', host_iclab_desktop__55565: 'http://iclab-desktop:55565/',
-    host_iclab_desktop__55575: 'http://iclab-desktop:55575/', host_iclab_desktop__56381: 'http://iclab-desktop:56381/',
-    host_iclab_desktop__56496: 'http://iclab-desktop:56496/', host_iclab_desktop__56904: 'http://iclab-desktop:56904/',
-    host_iclab_desktop__57135: 'http://iclab-desktop:57135/', host_iclab_desktop__57147: 'http://iclab-desktop:57147/',
-    host_iclab_desktop__57367: 'http://iclab-desktop:57367/', host_iclab_desktop__57521: 'http://iclab-desktop:57521/',
-    host_iclab_desktop__57572: 'http://iclab-desktop:57572/', host_iclab_desktop__57689: 'http://iclab-desktop:57689/',
-    host_iclab_desktop__57997: 'http://iclab-desktop:57997/', host_iclab_desktop__58225: 'http://iclab-desktop:58225/',
-    host_iclab_desktop__58335: 'http://iclab-desktop:58335/', host_iclab_desktop__58359: 'http://iclab-desktop:58359/',
-    host_iclab_desktop__58391: 'http://iclab-desktop:58391/', host_iclab_desktop__58600: 'http://iclab-desktop:58600/',
-    host_iclab_desktop__59197: 'http://iclab-desktop:59197/', host_iclab_desktop__59227: 'http://iclab-desktop:59227/',
-    host_iclab_desktop__59344: 'http://iclab-desktop:59344/', host_iclab_desktop__59399: 'http://iclab-desktop:59399/',
-    host_iclab_desktop__59431: 'http://iclab-desktop:59431/', host_iclab_desktop__59592: 'http://iclab-desktop:59592/',
-    host_iclab_desktop__59703: 'http://iclab-desktop:59703/', host_iclab_desktop__59888: 'http://iclab-desktop:59888/',
-    host_iclab_desktop__60240: 'http://iclab-desktop:60240/', host_iclab_desktop__60328: 'http://iclab-desktop:60328/',
-    host_iclab_desktop__60400: 'http://iclab-desktop:60400/', host_iclab_desktop__60594: 'http://iclab-desktop:60594/',
-    host_iclab_desktop__60897: 'http://iclab-desktop:60897/', host_iclab_desktop__60948: 'http://iclab-desktop:60948/',
-    host_yang_virtual_machine__33050: 'http://yang-virtual-machine:33050/'}
-rosversion: '1.11.16
+  uris: {host_iarc__36757: 'http://iarc:36757/', host_iclab__33711: 'http://iclab:33711/',
+    host_iclab__37149: 'http://iclab:37149/', host_iclab__40735: 'http://iclab:40735/',
+    host_iclab__41841: 'http://iclab:41841/', host_iclab__43179: 'http://iclab:43179/',
+    host_iclab__43566: 'http://iclab:43566/', host_iclab__44040: 'http://iclab:44040/',
+    host_iclab__44832: 'http://iclab:44832/', host_iclab__45564: 'http://iclab:45564/',
+    host_iclab__46725: 'http://iclab:46725/'}
+rosversion: '1.11.21
 
   '
-run_id: 80924fb6-91c7-11e6-acb6-b8aeed7cea2c
-stream_bytes_per_second: 45000000
-trig_rate: 15.0
-trig_timestamp_topic: ''
-trigger_mode: streaming
-usb_cam:
-  image_raw:
-    compressed: {format: jpeg, jpeg_quality: 80, png_level: 9}
-    compressedDepth: {depth_max: 10.0, depth_quantization: 100.0, png_level: 9}
-    theora: {keyframe_frequency: 64, optimize_for: 1, quality: 31, target_bitrate: 800000}
-whitebalance_blue: 100
-whitebalance_red: 100
-width: 640
-x_offset: 0
-y_offset: 0
+run_id: 81118ad6-a152-11e9-998a-b8aeed7bc249

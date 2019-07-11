@@ -8,6 +8,8 @@ Vision::Vision()
 }
 Vision::Vision(string topic)
 {
+    obj_filter_size=500;
+    HorizonMsg=150;
     image_sub = nh.subscribe(topic, 1, &Vision::imageCb, this);
     FrameRate = 0.0;
 }
@@ -60,6 +62,10 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8); //convert image data
         if (!cv_ptr->image.empty())
         {
+            Source = cv_ptr->image.clone();
+            cv::flip(Source, Source, 1); // reverse image
+            Black_Mask = Source.clone();
+            Red_Mask = Source.clone();
             #pragma omp parallel sections
             {
                 #pragma omp section
@@ -82,6 +88,9 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
             //=======================FPS======================
             FrameRate = Rate();
             //================================================
+            to_strategy.mpicture++;
+            to_strategy.gray_ave = gray_ave;
+            mpicture.publish(to_strategy);
         }
     }
     catch (cv_bridge::Exception &e)
@@ -90,217 +99,51 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
         return;
     }
 }
-cv::Mat Vision::Black_Line(const cv::Mat iframe)
-{
-    cv::Mat threshold(iframe.rows, iframe.cols, CV_8UC3, Scalar(0, 0, 0));
-    cv::Mat edge;
-    cv::Mat oframe(iframe.rows, iframe.cols, CV_8UC3, Scalar(0, 0, 0));
-    Mat visual_map(550, 750, CV_8UC3, Scalar(0,0,0));
-    int ground = OuterMsg-100;
-    if(HorizonMsg>0&&HorizonMsg<OuterMsg){
-        ground = HorizonMsg;
-    }
-    vector<int> black_dis;
-    blackdis.data.clear();
-    //======================threshold===================
-    for (int i = 0; i < iframe.rows; i++)
-    {
-        for (int j = 0; j < iframe.cols; j++)
-        {
-            unsigned char gray = (iframe.data[(i * iframe.cols * 3) + (j * 3) + 0] + iframe.data[(i * iframe.cols * 3) + (j * 3) + 1] + iframe.data[(i * iframe.cols * 3) + (j * 3) + 2]) / 3;
-            if (gray < BlackGrayMsg)
-            {
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 0] = 0;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 1] = 0;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 2] = 0;
-            }
-            else
-            {
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 0] = 255;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 1] = 255;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 2] = 255;
-            }
-        }
-    }
-    //cv::imshow("threshold", threshold);
-    //Canny(threshold, edge, 50, 150, 3);
-    //edge=convertTo3Channels(edge);
-    //cv::imshow("edge", edge);
 
-//=========================
-    int hmin, hmax, smin, smax, vmin, vmax;
-    Mat hsv(iframe.rows, iframe.cols, CV_8UC3, Scalar(0, 0, 0));
-    Mat mask(iframe.rows, iframe.cols, CV_8UC1, Scalar(0, 0, 0));
-    Mat mask2(iframe.rows, iframe.cols, CV_8UC1, Scalar(0, 0, 0));
-    Mat dst(iframe.rows, iframe.cols, CV_8UC3, Scalar(0, 0, 0));
-    if (HSV_red.size() == 6)
-    {
-        hmin = HSV_red[0]/2;
-        hmax = HSV_red[1]/2;
-        smin = HSV_red[2]*2.55;
-        smax = HSV_red[3]*2.55;
-        vmin = HSV_red[4]*2.55;
-        vmax = HSV_red[5]*2.55;
-        /*for(int i =0; i<HSV_red.size(); i++)
-        {
-            cout<<HSV_red[i]<<" ";
-        }
-        cout<<endl;*/
-        cvtColor(iframe, hsv, CV_BGR2HSV);
-
-        if (HSV_red[0] <= HSV_red[1])
-        {
-            inRange(hsv, Scalar(hmin, smin, vmin), Scalar(hmax, smax, vmax), mask);
-        }
-        else
-        {
-            inRange(hsv, Scalar(hmin, smin, vmin), Scalar(255, smax, vmax), mask);
-            inRange(hsv, Scalar(0, smin, vmin), Scalar(hmax, smax, vmax), mask2);
-            mask = mask + mask2;
-        }
-
-        //開操作 (去除一些噪點)
-        Mat element = getStructuringElement(MORPH_RECT, Size(3, 3));
-        morphologyEx(mask, mask, MORPH_OPEN, element);
-
-        //閉操作 (連接一些連通域)
-        morphologyEx(mask, mask, MORPH_CLOSE, element);
-        //cv::imshow("mask", mask);
-        iframe.copyTo(dst, (cv::Mat::ones(mask.size(), mask.type()) * 255 - mask));
-        //cv::imshow("dst", dst);
-        //waitKey(10);
-    }
-    else
-    {
-        cout << "HSV vector size: " << HSV_red.size() << " error\n";
-    }
-    int red_range[360];
-    for(int i=0; i<360; i++){
-        red_range[i]=0;
-    }
-    mask=convertTo3Channels(mask);
-    for (double angle = FrontMsg; angle < 360 + FrontMsg; angle = angle + BlackAngleMsg)
-    {
-        for (int r = ground; r >= InnerMsg; r--)
-        {
-            int angle_be = Angle_Adjustment(angle);
-
-            int x_ = r * Angle_cos[angle_be];
-            int y_ = r * Angle_sin[angle_be];
-            int x = Frame_Area(CenterXMsg + x_, oframe.cols);
-            int y = Frame_Area(CenterYMsg - y_, oframe.rows);
-            if (mask.data[(y * mask.cols + x)*3 + 0] == 255)
-            {
-                red_range[angle_be] = r-3;
-                break;
-            }
-        }
-    }
-    //=====================draw the scan line===========
-    Mat input = threshold.clone();
-    oframe = threshold.clone();
-    //oframe = threshold.clone();
-    int line_count = 0;
-    for (double angle = FrontMsg; angle < 360 + FrontMsg; angle = angle + BlackAngleMsg)
-    {
-        int count = 0;
-        for (int r = InnerMsg; r <= ground; r++)
-        {
-
-            if(line_count%2==0&&r<(InnerMsg+ground)/2){
-                r=(InnerMsg+ground)/2;
-            }
-            int angle_be = Angle_Adjustment(angle);
-
-            int x_ = r * Angle_cos[angle_be];
-            int y_ = r * Angle_sin[angle_be];
-            int x = Frame_Area(CenterXMsg + x_, oframe.cols);
-            int y = Frame_Area(CenterYMsg - y_, oframe.rows);
-            if (input.data[(y * input.cols + x) * 3 + 0] != 255)
-            {
-                if (angle_be == FrontMsg)
-                {
-                    oframe.data[(y * oframe.cols + x) * 3 + 0] = 255;
-                    oframe.data[(y * oframe.cols + x) * 3 + 1] = 150;
-                    oframe.data[(y * oframe.cols + x) * 3 + 2] = 0;
-                }
-                else
-                {
-                    oframe.data[(y * oframe.cols + x) * 3 + 0] = 0;
-                    oframe.data[(y * oframe.cols + x) * 3 + 1] = 0;
-                    oframe.data[(y * oframe.cols + x) * 3 + 2] = 255;
-                }
-            }
-            if(r>=red_range[angle_be]||r>=ground){
-                //cout<<"fuck"<<endl;
-                blackdis.data.push_back(250);
-                break;
-            }
-            if (input.data[(y * input.cols + x) * 3 + 0] == 255)
-            {
-                circle(oframe, Point(x, y), 2, Scalar(255, 0, 0), 1);
-                
-                x=visual_map.cols/2+Omni_distance(r)*cos((angle-FrontMsg)*DEG2RAD);
-                y=visual_map.rows/2-Omni_distance(r)*sin((angle-FrontMsg)*DEG2RAD);
-                circle(visual_map, Point(x, y), 2, Scalar(0, 255, 255), -1);
-
-                x=Omni_distance(r)*cos((angle-FrontMsg)*DEG2RAD);
-                y=-Omni_distance(r)*sin((angle-FrontMsg)*DEG2RAD);
-                //blackdis.data.push_back(x);
-                //blackdis.data.push_back(y);
-                //>>>>>>>>>>20190621>>>>>>>>>>>>>>>>>>
-                double realdis = Omni_distance(r);
-                if(realdis>=250)realdis=250;
-                blackdis.data.push_back(Omni_distance(r));
-                //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                count++;
-                //if(count>10)break;
-                //blackdis.pusht_back(Omni_distance(r));
-                break;
-            }
-        }
-        line_count++;
-    }
-    line(oframe, Point(CenterXMsg, CenterYMsg - InnerMsg), Point(CenterXMsg, CenterYMsg + InnerMsg), Scalar(0, 255, 0), 1);
-    line(oframe, Point(CenterXMsg - InnerMsg, CenterYMsg), Point(CenterXMsg + InnerMsg, CenterYMsg), Scalar(0, 255, 0), 1);
-    circle(oframe, Point(CenterXMsg, CenterYMsg), InnerMsg, Scalar(0, 255, 0), 0);
-    circle(oframe, Point(CenterXMsg, CenterYMsg), ground, Scalar(0, 255, 0), 0);
-    circle(oframe, Point(CenterXMsg, CenterYMsg), OuterMsg, Scalar(0, 255, 0), 0);
-
-    //draw the robot
-    circle(visual_map, Point(visual_map.cols/2, visual_map.rows/2), 5, Scalar(0, 0, 255), 1);
-    line(visual_map, Point(visual_map.cols/2,visual_map.rows/2), Point(visual_map.cols/2+5,visual_map.rows/2), Scalar(0,0,255), 1);
-    //cv::imshow("visual_map", visual_map);
-    //cv::imshow("blackdis", oframe);
-    //cv::waitKey(10);
-
-    return oframe;
-}
-//==================================
 void Vision::black_binarization()
 {
-    cv::Mat iframe = Source.clone();
-    cv::Mat threshold(iframe.rows, iframe.cols, CV_8UC3, Scalar(0, 0, 0));
-    for (int i = 0; i < iframe.rows; i++)
+    Mat Main_frame = Source.clone();
+    int gray_count = 0;
+    int black_gray = BlackGrayMsg;
+    gray_ave = 0;
+    for (int i = 0; i < Main_frame.rows; i++)
     {
-        for (int j = 0; j < iframe.cols; j++)
+        for (int j = 0; j < Main_frame.cols; j++)
         {
-            unsigned char gray = (iframe.data[(i * iframe.cols * 3) + (j * 3) + 0] + iframe.data[(i * iframe.cols * 3) + (j * 3) + 1] + iframe.data[(i * iframe.cols * 3) + (j * 3) + 2]) / 3;
-            if (gray < BlackGrayMsg)
+            unsigned char gray = (Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 0] 
+                                + Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 1] 
+                                + Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 2]) / 3;
+            if (gray < black_gray)
             {
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 0] = 0;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 1] = 0;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 2] = 0;
-            }
-            else
-            {
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 0] = 255;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 1] = 255;
-                threshold.data[(i * threshold.cols * 3) + (j * 3) + 2] = 255;
+                gray_ave += gray;
+                gray_count++;
             }
         }
     }
-    Black_Mask = threshold.clone();
+    gray_count = (gray_count == 0) ? 0.00001 : gray_count;
+    gray_ave = gray_ave / gray_count;
+
+    for (int i = 0; i < Main_frame.rows; i++)
+    {
+        for (int j = 0; j < Main_frame.cols; j++)
+        {
+            unsigned char gray = (Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 0] 
+                                + Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 1] 
+                                + Main_frame.data[(i * Main_frame.cols * 3) + (j * 3) + 2]) / 3;
+            if (gray < black_gray - (setgray - gray_ave))
+            {
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 0] = 0;
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 1] = 0;
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 2] = 0;
+            }
+            else
+            {
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 0] = 255;
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 1] = 255;
+                Black_Mask.data[(i * Black_Mask.cols * 3) + (j * 3) + 2] = 255;
+            }
+        }
+    }
 }
 
 class Coord
@@ -356,8 +199,10 @@ void Vision::black_filter()
     int inner = InnerMsg, outer = OuterMsg, centerx = CenterXMsg, centery = CenterYMsg;
     int detection_range = HorizonMsg;
     int width = Black_Mask.cols-1, length = Black_Mask.rows-1;
+    obj_filter_size =500;
     int obj_size = obj_filter_size;
-
+    //cout<<obj_filter_size<<endl;
+    
     vector<vector<Coord> > obj; //物件列表
 
     Mat check_map = Mat(Size(Black_Mask.cols, Black_Mask.rows), CV_8UC3, Scalar(0, 0, 0));//確認搜尋過的pix
@@ -441,13 +286,14 @@ void Vision::black_item()
     std::vector<double>blackItem_pixel;
     std_msgs::Int32MultiArray BlackRealDis;
     Mat binarization_map = Black_Mask.clone();
-    //int black_angle = BlackAngleMsg;
-    int black_angle = 3;//避障策略只能三度一條掃描線
+    int black_angle = BlackAngleMsg;
+    //int black_angle = 3;//避障策略只能三度一條掃描線
     int center_front = FrontMsg;
     int center_inner = InnerMsg;
     int center_outer = OuterMsg;
     int center_x = CenterXMsg;
     int center_y = CenterYMsg;
+    
     for (int angle = 0; angle < 360; angle = angle + black_angle)
     {
         int angle_be = angle + center_front;
@@ -457,7 +303,7 @@ void Vision::black_item()
 
         double x_ = Angle_cos[angle_be];
         double y_ = Angle_sin[angle_be];
-        for (int r = center_inner - 1; r <= HorizonMsg; r++)
+        for (int r = center_inner - 1; r <= center_outer; r++)
         {
             int dis_x = x_ * r;
             int dis_y = y_ * r;
@@ -478,9 +324,9 @@ void Vision::black_item()
                 Black_Mask.data[(image_y * Black_Mask.cols + image_x) * 3 + 1] = 0;
                 Black_Mask.data[(image_y * Black_Mask.cols + image_x) * 3 + 2] = 255;
             }
-            if (r <= HorizonMsg)
+            if (r == center_outer)
             {
-                blackItem_pixel.push_back(hypot(999, 999));
+                blackItem_pixel.push_back(hypot(dis_x, dis_y));
             }
         }
     }
@@ -508,11 +354,16 @@ void Vision::red_binarization()
     cvtColor(inputMat, hsv, CV_BGR2HSV);
     hmin = HSV_red[0]/2;
     hmax = HSV_red[1]/2;
-    smin = HSV_red[2]*2.55;
-    smax = HSV_red[3]*2.55;
-    vmin = HSV_red[4]*2.55;
-    vmax = HSV_red[5]*2.55;
-    if (HSV_red[0] >= HSV_red[1])
+    smin = HSV_red[2]*2.56;
+    smax = HSV_red[3]*2.56;
+    vmin = HSV_red[4]*2.56;
+    vmax = HSV_red[5]*2.56;
+    //for(int i =0; i<HSV_red.size(); i++)
+    //{
+    //    cout<<HSV_red[i]<<" ";
+    //}
+    //cout<<endl;
+    if (HSV_red[0] <= HSV_red[1])
     {
         inRange(hsv, Scalar(hmin, smin, vmin), Scalar(hmax, smax, vmax), mask);
     }
@@ -524,8 +375,8 @@ void Vision::red_binarization()
     }
     convertTo3Channels(mask);
     //開操作 (去除噪點)
-    Mat element = getStructuringElement(MORPH_RECT, Size(2, 2));
-    morphologyEx(mask, mask, MORPH_OPEN, element);
+    //Mat element = getStructuringElement(MORPH_RECT, Size(2, 2));
+    //morphologyEx(mask, mask, MORPH_OPEN, element);
     
     white.copyTo(dst, (cv::Mat::ones(mask.size(), mask.type()) * 255 - mask));
     Red_Mask = dst;
@@ -558,7 +409,7 @@ void Vision::red_line()
 
         double x_ = Angle_cos[angle_be];
         double y_ = Angle_sin[angle_be];
-        for (int r = center_inner; r <= HorizonMsg; r++)
+        for (int r = center_inner; r <= center_outer; r++)
         {
             int dis_x = x_ * r;
             int dis_y = y_ * r;
@@ -579,9 +430,9 @@ void Vision::red_line()
                 Red_Mask.data[(image_y * Red_Mask.cols + image_x) * 3 + 1] = 0;
                 Red_Mask.data[(image_y * Red_Mask.cols + image_x) * 3 + 2] = 255;
             }
-            if (r <= HorizonMsg)
+            if (r >= center_outer)
             {
-                redItem_pixel.push_back(hypot(999, 999));
+                redItem_pixel.push_back(hypot(dis_x, dis_y));
             }
         }
     }
@@ -592,10 +443,6 @@ void Vision::red_line()
         redRealDis.data.push_back(object_dis);
     }
     red_pub.publish(redRealDis);
-
-    to_strategy.mpicture++;
-    to_strategy.gray_ave = gray_ave;
-    mpicture.publish(to_strategy);
 
     ///////////////////Show view/////////////////
     //cv::imshow("red_line", Red_Mask);

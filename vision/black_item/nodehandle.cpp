@@ -1,8 +1,6 @@
 #include "nodehandle.h"
 
-NodeHandle::NodeHandle():
-    obj_filter_size(500),
-    HorizonMsg(150)
+NodeHandle::NodeHandle()
 {
     Readyaml();
     AngleLUT();
@@ -10,6 +8,7 @@ NodeHandle::NodeHandle():
     save_sub = nh.subscribe("interface/bin_save", 1000, &NodeHandle::SaveButton_setting, this);
     blackframe_pub = nh.advertise<sensor_msgs::Image>("/camera/black", 1);
     blackdis_pub = nh.advertise<std_msgs::Int32MultiArray>("/vision/BlackRealDis", 1);
+    red_pub = nh.advertise<std_msgs::Int32MultiArray>("/vision/redRealDis", 1);
     mpicture = nh.advertise<vision::visionlook>("/vision/picture_m", 1);
     //http://localhost:8080/stream?topic=/camera/image_monitor webfor /camera/image
 }
@@ -55,7 +54,7 @@ void NodeHandle::Parameter_getting()
     nh.getParam("/FIRA/vision/HSV/black/gray", BlackGrayMsg);
     nh.getParam("/FIRA/vision/HSV/black/angle", BlackAngleMsg);
     //====================================================
-    nh.getParam("/FIRA/vision/HSV/Red", HSV_red);
+    nh.getParam("/FIRA/vision/HSV/Ball", HSV_red);
     //====================================================
     if (nh.hasParam("/AvoidChallenge/GraySet"))
     {

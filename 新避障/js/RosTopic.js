@@ -59,6 +59,7 @@ var cmdVel = new ROSLIB.Topic({
 });
 
 function StrategyStop() {
+    console.log("stop")
     setTimeout(StandBy, 0);
     setTimeout(StandBy, 100);
     setTimeout(StandBy, 200);
@@ -79,7 +80,7 @@ function StandBy() {
             z: 0
         }
     });
-    console.log(twist);
+    //console.log(twist);
     cmdVel.publish(twist);
 }
 
@@ -97,7 +98,7 @@ function PublishTopicCmdVel(vec3) {
         }
     });
     if (RemoteState) {
-        console.log(twist);
+        //console.log(twist);
         cmdVel.publish(twist);
     }
 }

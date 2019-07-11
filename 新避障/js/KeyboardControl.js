@@ -118,11 +118,26 @@ function keysdown(e) {
         }
 
         //SwitchRobot
-        if (keys[80]) {
+        if (keys[80]) {//key=p stop
             ParamAvoidGo(0);
             StrategyStop();
-        } else if (keys[79]) {
-            ParamAvoidGo(1);
+            $('#StartInput').prop('checked',false);
+            $('#StartInput').change();
+            $('#StopInput').prop('checked',true);
+            $('#StopInput').change();
+        } else if (keys[79]) {//key=o go
+            if(safe_weitch_checked==true){
+                ParamAvoidGo(1);
+                $('#StartInput').prop('checked',true);
+                $('#StartInput').change();
+                $('#StopInput').prop('checked',false);
+                $('#StopInput').change();
+            }else{
+                $('#StartInput').prop('checked',false);
+                $('#StartInput').change();
+                $('#StopInput').prop('checked',true);
+                $('#StopInput').change();
+            }
         }
     }
 }
@@ -142,7 +157,10 @@ function keysdown(e) {
 // }
 
 function keyuped(e) {
-    if (KeyboardStart) {
+    if(safe_weitch_checked==false){
+        alert("尚未解鎖");
+    }
+    if (KeyboardStart&&safe_weitch_checked) {
         console.log("start moving speed: %d", speed);
         if (keys[e.keyCode] == true) releasebutton(e.keyCode);
         keys[e.keyCode] = false;

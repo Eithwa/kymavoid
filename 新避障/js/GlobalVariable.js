@@ -40,3 +40,5 @@ var joystick_V = {
     y: 0,
     ang: 0
 };
+
+var safe_weitch_checked = false;

@@ -104,6 +104,15 @@ function onloadAvoidGO() {
 
 function ParamAvoidGo(state) {
     console.log(state);
-    if (CheckIP[0] == 1)
-        AvoidGo.set(state);
+    if(safe_weitch_checked==false&&state==1){
+        alert("尚未解鎖");
+    }
+    if (CheckIP[0] == 1){
+        if(state == 0){
+            AvoidGo.set(state);
+        }
+        if(state == 1 && safe_weitch_checked){
+            AvoidGo.set(state);
+        }
+    }
 }

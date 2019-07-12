@@ -71,24 +71,24 @@ cv::Mat Vision::draw_interface()
     int x;
     int y;
     //===============
-    draw_ellipse(visual_map,(df_2*3-90),(df_1*3-90),far_line,Scalar(18,116,54),2);
+    draw_ellipse(visual_map,(360-(df_2*3)-90),(360-(df_1)*3-90),far_line,Scalar(18,116,54),2);
     
     //===============
-    draw_ellipse(visual_map,(dd_2*3-90),(dd_1*3-90),close_line,Scalar(250,0,0),2);
-    angle = good_angle*3-90;
+    draw_ellipse(visual_map,(360-(dd_2*3)-90),(360-(dd_1*3)-90),close_line,Scalar(250,0,0),2);
+    angle = 360-(good_angle*3)-90;
     x = center_x+(close_line-20)*cos(angle*DEG2RAD);
     y = center_y-(close_line-20)*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(250,0,0),2);
     //===============
     //cout<<"af_angle"<<af_angle<<endl;
-    angle = int(af_angle*3)-90;
+    angle = int(360-(af_angle*3))-90;
     x = center_x+af_line*cos(angle*DEG2RAD);
     y = center_y-af_line*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0), 6);
     //==================
     //===============
     //cout<<"final_angle"<<final_angle<<endl;
-    angle = int(final_angle*3)-90;
+    angle = int(360-(final_angle*3))-90;
     x = center_x+final_line*cos(angle*DEG2RAD);
     y = center_y-final_line*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 6);

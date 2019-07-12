@@ -459,15 +459,17 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int ssm_r,ssm_l;
     //=================
     //什麼情況main_vec =40 80?
-    if(main_vec==40){ssm_r=20;ssm_l=95;}
-    else if(main_vec==80){ssm_r=25;ssm_l=100;}
-    else{ssm_r=25;ssm_l=95;}
+    //if(main_vec==40){ssm_r=20;ssm_l=95;}
+    //else if(main_vec==80){ssm_r=25;ssm_l=100;}
+    //else{ssm_r=25;ssm_l=95;}
+    ssm_l = good_angle - 30;
+    ssm_r = good_angle + 30; 
     //====================
     ScanInfo artificial_field;
     artificial_field.type = ARTIFICIAL_FIELD;
     artificial_field.scan_main = main_vec;
-    artificial_field.scan_left = ssm_r;
-    artificial_field.scan_right = ssm_l;
+    artificial_field.scan_left = ssm_l;
+    artificial_field.scan_right = ssm_r;
     RoutePlan(artificial_field);
     HowManyOk = artificial_field.vacancy_number;
     HowManyBoj = artificial_field.obstacle_number;

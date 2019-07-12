@@ -10,6 +10,7 @@
 #include <dynamic_reconfigure/Config.h>
 #include <highgui.h>
 #include <vector>
+#include <queue>
 #include <math.h>
 #include <signal.h>
 #include <fstream>

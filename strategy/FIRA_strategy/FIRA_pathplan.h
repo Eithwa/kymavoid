@@ -5,6 +5,7 @@
 #include <ros/ros.h>
 #include <vector>
 #include "strategy/strategylook.h"
+#include "vision/avoid.h"
 
 //攻擊防守,防守策略？
 //沒有持球攻擊防守的策略
@@ -45,9 +46,12 @@ private:
 
 
     //start---utility---
+    ros::NodeHandle nh;
     double head2Obj(Vector3D robot,Vector3D dst,double robotRot);
     double vecAngle(Vector2d a,Vector2d b);
     void RoutePlan(ScanInfo &THIS);
+    void connected();
+    int v_fast;
     //end---utility---
 
 
@@ -135,6 +139,7 @@ public:
     double good_angle;
     double far_good_angle;
     double final_angle;
+    double af_angle;
     double num_change;
     double go_where_x;
     double go_where_y;
@@ -142,8 +147,10 @@ public:
     int b_picture_m,avoid_go;
     int not_good_p;
     ros::Publisher tovision;
+    ros::Publisher route_pub;
     strategy::strategylook vision_per;
     double kp,ki,kd;
+    void Pub_route();
     ////////////////////////////////////
 
     std::vector<double> SPlanning_Velocity;
@@ -161,7 +168,8 @@ public:
 
     // Robot shoot signal publisher
     int shoot = 0;
-    bool bool_shoot(double goal_dis){
+    bool bool_shoot(double goal_dis)
+    {
         static ros::Time start = ros::Time::now();
         ros::Time current = ros::Time::now();
         double start_time = (double)(start.sec+(double)start.nsec/1000000000);

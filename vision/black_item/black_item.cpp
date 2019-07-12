@@ -10,6 +10,7 @@ Vision::Vision(string topic)
 {
     obj_filter_size=500;
     HorizonMsg=150;
+    setgray=10;
     image_sub = nh.subscribe(topic, 1, &Vision::imageCb, this);
     FrameRate = 0.0;
 }

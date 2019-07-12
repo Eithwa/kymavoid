@@ -72,6 +72,7 @@ add_message_files(
     bin.msg
     view.msg
     visionlook.msg
+    avoid.msg
 )
 include_directories(${catkin_INCLUDE_DIRS})
 ##Generate services in the 'srv' folder
@@ -150,8 +151,9 @@ foreach(
     interface
     monitor
     white_line
-    blackItem
+    #blackItem
     black_item
+    avoidance
 )
 add_subdirectory(${subdir})
 endforeach()

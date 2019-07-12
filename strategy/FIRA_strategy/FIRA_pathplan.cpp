@@ -5,8 +5,10 @@
 //=========Environment init=============//
 FIRA_pathplan_class::FIRA_pathplan_class(){
     opponent = false;
-
-
+    v_fast = 50;
+    //回傳策略線向量給影像
+    tovision  = nh.advertise<strategy::strategylook>("/vision/strategy_line",1);
+    route_pub = nh.advertise<vision::avoid>("/avoid/route",1);
 }
 //start---simulator---
 void FIRA_pathplan_class::setEnv(Environment iEnv){
@@ -142,10 +144,20 @@ ScanInfo::ScanInfo()
         }
     }
 }
+void FIRA_pathplan_class::connected(){
+    //影像持續接收判斷
+    not_good_p=(env.picture_m==b_picture_m)?not_good_p+1:0;
+    b_picture_m=env.picture_m;
+    if(not_good_p>10){
+        v_fast=0;
+        //預設為模擬模式 無接收blackitem 連接網頁後會關閉模擬模式才能正常啟動
+        printf("\n\n[WORNING] 未接收blackitem資料 / 攝影機連線中斷 / 未連接網頁介面\n\n\n");
+    }
+}
 #define OUTER 0
 #define INNER 1
 #define ARTIFICIAL_FIELD 2
-void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){ 
+void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     double close_dis = Distant[0];//60 speed (10) //54  speed (30,10)
     double halfclose_dis = Distant[1];//80
     double far_dis=Distant[2];//200
@@ -164,6 +176,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int vacancy_size=99;
 
     for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
+        //若黑線小於far dis(250) 且黑線大於中層的距離 或者紅線小於最遠距離 b_ok = false
         if(THIS.type == OUTER){
             is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
         }else if(THIS.type == INNER){
@@ -175,57 +188,55 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
         }
         is_vacancy=(env.blackdis[i] <= close_dis+20)?false:true;
         //is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
-        if(is_vacancy==true){
-            obstacle_flag=false;
-            if(vacancy_flag==false){
-                vacancy_flag=true;
+        if(is_vacancy==true){//若可以走的話
+            obstacle_flag=false;//障礙物計算flag關閉
+            if(vacancy_flag==false){//新的可走空間
+                vacancy_flag=true;//可以走的flag開啟
                 vacancy_number++;
                 vacancy_size=1;
-                vacancy[vacancy_number][0]=i;
-                vacancy[vacancy_number][1]=i;
-            }else{
-                vacancy_size++;
-                vacancy[vacancy_number][1]=i;
+                vacancy[vacancy_number][0]=i;//可以走的空間起始
+                vacancy[vacancy_number][1]=i;//可以走的空間結尾
+            }else{//如果continuedline_ok=1 如可以走的flag開啟
+                vacancy_size++;//可以走的空間寬度++
+                vacancy[vacancy_number][1]=i;//更新結尾
             }
-            if(obstacle_size<size_ignore){
-                vacancy_number--;
+            //如果掃到攝影機支架黑色障礙物有可能中斷?(可走空間小於4也會被清除所以沒問題)
+            if(obstacle_size<size_ignore){//如果前一個障礙物掃線數小於4 初始99
+                vacancy_number--;//可走空間減1 合併前一個空間
                 if(vacancy_number==0){
                     vacancy_number=1;
-                    vacancy[vacancy_number][0]=THIS.scan_left;
+                    vacancy[vacancy_number][0]=THIS.scan_left;//Ok_place初始改成起始最左
                 }
-                obstacle_number--;
-                vacancy[vacancy_number][1]=i;
-                vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;
-                obstacle_size=99;
+                obstacle_number--;//障礙物減1 合併前一個障礙物
+                vacancy[vacancy_number][1]=i;//可以走的空間結尾
+                vacancy_size=vacancy[vacancy_number][1]-vacancy[vacancy_number][0]+1;//可以走的寬度 （為什麼要+1)
+                obstacle_size=99;//返回障礙物初始值 是否不需要?
             }
         }else{
-            vacancy_flag=false;
+            vacancy_flag=false;//可以走的flag關閉
             if(obstacle_flag==false){
-                obstacle_flag=true;
+                obstacle_flag=true;//障礙物計算flag開啟
                 obstacle_number++;
-                obstacle_size=1;
-                obstacle[obstacle_number][0]=i;
-                obstacle[obstacle_number][1]=i;
+                obstacle_size=1;//障礙物寬度計算
+                obstacle[obstacle_number][0]=i;//障礙物起始
+                obstacle[obstacle_number][1]=i;//障礙物結尾
             }else{
-                obstacle_size++;
-                obstacle[obstacle_number][1]=i;
+                obstacle_size++;//更新障礙物寬度
+                obstacle[obstacle_number][1]=i;//更新結尾
             }
-            if(vacancy_size<size_ignore){
-                obstacle_number--;
+            if(vacancy_size<size_ignore){//如果可走空間小於4
+                obstacle_number--;//障礙物減1
                 if(obstacle_number==0){
                     obstacle_number=1;
                     obstacle[obstacle_number][0]=THIS.scan_left;
                 }
-                vacancy_number--;
-                obstacle[obstacle_number][1]=i;
-                obstacle_size=obstacle[obstacle_number][1]-obstacle[obstacle_number][0]+1;
-                vacancy_size=99;
+                vacancy_number--;//可以走的空間去除(小於4條線)
+                obstacle[obstacle_number][1]=i;//改變障礙結尾 合併前一個障礙物
+                obstacle_size=obstacle[obstacle_number][1]-obstacle[obstacle_number][0]+1;//計算障礙物寬度
+                vacancy_size=99;//返回可走空間初始值
             }
         }
     }
-    //if(THIS.type==ARTIFICIAL_FIELD){
-        std::cout<<"fuck!!!!  "<<obstacle_number<<"  "<<vacancy_number<<std::endl;
-    //}
     THIS.obstacle_number = obstacle_number;
     THIS.vacancy_number = vacancy_number;
     for(int i=0; i<30; i++){
@@ -250,9 +261,22 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     THIS.move_right = vacancy[max_vacancy_number][1];
     //std::cout<<"move_right: "<<THIS.move_right<<"  move_left: "<<THIS.move_left<<std::endl;
 }
+void FIRA_pathplan_class::Pub_route(){
+    vision::avoid msg;
+    msg.df_1 = df_1;
+    msg.df_2 = df_2;
+    msg.far_good_angle = far_good_angle;
+    msg.dd_1 = dd_1;
+    msg.dd_2 = dd_2;
+    msg.good_angle = good_angle;
+    msg.final_angle = final_angle; 
+    msg.af_angle = af_angle; 
+    route_pub.publish(msg);
+}
 void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     std::cout<<"===============Avoid Obstacles Information===============\n";
     Rate();
+    connected();
     int r_number = Robot_index;
     double FB_x = env.home[Robot_index].FB_x;
     double FB_y = env.home[Robot_index].FB_y;
@@ -341,7 +365,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     good_angle = (int)(inner.max_vacancy_number==0)?90:(dd_1+dd_2)/2;
     HowManyOk = inner.vacancy_number;
     HowManyBoj = inner.obstacle_number;
-    std::cout<<"inner.move_right: "<<inner.move_right<<"  inner.move_left: "<<inner.move_left<<std::endl;
+    //std::cout<<"inner.move_right: "<<inner.move_right<<"  inner.move_left: "<<inner.move_left<<std::endl;
     
     more_ok_line=0;save_ok_line=0;right_ok=0;
     printf("=====================================\nhowmany_ok%d\n",HowManyOk);
@@ -631,6 +655,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                     Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad);//[53]->angle 53
                     Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad);
                 }
+                af_angle = 90-(atan2(-Fy,-Fx)*180/pi)/3;
                 printf("Fx=%lf,Fy=%lf\n",Fx,Fy);//輸出斥力大小
             }
             dis_sum=0;
@@ -718,9 +743,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     /////////////////////////////////////////////////////////////////////////////////////
     printf("final_angle=%lf\n",final_angle);
-    static int v_fast=50;
     static int b_not_good_p=0;
-    static int stop_count=0;
     //=========每5秒做一次速度規劃=======
     if((int)count%5==1){
         if(b_not_good_p==not_good_p){ 
@@ -742,11 +765,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     }
     //===============================
-    if(not_good_p>10){
-        v_fast=0;
-        //預設為模擬模式 無接收blackitem 連接網頁後會關閉模擬模式才能正常啟動
-        printf("\n\n[WORNING] 未接收blackitem資料 / 攝影機連線中斷 / 未連接網頁介面\n\n\n");
-    }
+    Pub_route();
 
     b_not_good_p=not_good_p;
     // v_fast=1;
@@ -832,13 +851,7 @@ void FIRA_pathplan_class::loadParam(ros::NodeHandle *n){
     n->getParam("/AvoidChallenge/ki",ki);
     n->getParam("/AvoidChallenge/kd",kd);
     n->getParam("/AvoidChallenge/avoid_go",avoid_go);
-    //=============topic============
-    //回傳策略線向量給影像
-    tovision  = n->advertise<strategy::strategylook>("/vision/strategy_line",1);
-    //影像持續接收判斷
-    not_good_p=(env.picture_m==b_picture_m)?not_good_p+1:0;
-    b_picture_m=env.picture_m;
-    //==============================
+
     
     if(n->getParam("/AvoidChallenge/Distant", Distant)){
         // for(int i=0;i<1;i++)

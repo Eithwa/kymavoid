@@ -8,7 +8,7 @@ void SigintHandler(int sig)
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "localization_white_line");
+    ros::init(argc, argv, "black_item");
     ros::NodeHandle h_node;
     signal(SIGINT, SigintHandler);
     //Vision cam(VISION_TOPIC);

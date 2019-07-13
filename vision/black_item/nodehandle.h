@@ -69,6 +69,7 @@ class NodeHandle
     //==============avoid====================
     ros::Publisher blackframe_pub;
     ros::Publisher blackdis_pub;
+    ros::Publisher redframe_pub;
     ros::Publisher red_pub;
     ros::Publisher mpicture;
     vision::visionlook to_strategy;

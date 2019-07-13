@@ -40,18 +40,21 @@ double Vision::Rate()
     }
     return frame_rate;
 }
-void draw_ellipse(Mat &iframe,double angle_min, double angle_max, double radius, Scalar color, double width){
-    int x;
-    int y;
+void draw_ellipse(Mat &iframe,double angle_min, double angle_max, double ang_min_dis, double ang_max_dis, Scalar color, double width){
+    int x1;
+    int y1;
+    int x2;
+    int y2;
     int center_x = iframe.cols/2;
     int center_y = iframe.rows/2;
-    x = center_x+radius*cos(angle_max*DEG2RAD);
-    y = center_y-radius*sin(angle_max*DEG2RAD);
-    line(iframe, Point(center_x, center_y), Point(x, y), color, width);
-    x = center_x+radius*cos(angle_min*DEG2RAD);
-    y = center_y-radius*sin(angle_min*DEG2RAD);
-    line(iframe, Point(center_x, center_y), Point(x, y), color, width);
-    ellipse(iframe, Point(center_x, center_y), Size(radius, radius), 0, 360 - angle_max, 360 - angle_min, color, width);
+    x1 = center_x+ang_max_dis*cos(angle_max*DEG2RAD);
+    y1 = center_y-ang_max_dis*sin(angle_max*DEG2RAD);
+    line(iframe, Point(center_x, center_y), Point(x1, y1), color, width);
+    x2 = center_x+ang_min_dis*cos(angle_min*DEG2RAD);
+    y2 = center_y-ang_min_dis*sin(angle_min*DEG2RAD);
+    line(iframe, Point(center_x, center_y), Point(x2, y2), color, width);
+    line(iframe, Point(x1, y1), Point(x2, y2), color, width);
+    //ellipse(iframe, Point(center_x, center_y), Size(ang_max_dis, ang_max_dis), 0, 360 - angle_max, 360 - angle_min, color, width);
 }
 cv::Mat Vision::draw_interface()
 {
@@ -66,15 +69,27 @@ cv::Mat Vision::draw_interface()
     int angle;
     int far_line = 250;
     int close_line = 200;
-    int final_line = 230;
+    int final_line = 200;
     int af_line = 50;
     int x;
     int y;
     //===============
-    draw_ellipse(visual_map,(360-(df_2*3)-90),(360-(df_1)*3-90),far_line,Scalar(18,116,54),2);
-    
+    //cout<<"final_angle"<<final_angle<<endl;
+    angle = int(360-(final_angle*3))-90;
+    x = center_x+final_line*cos(angle*DEG2RAD);
+    y = center_y-final_line*sin(angle*DEG2RAD);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 7);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,255,255), 6);
+    //cout<<"v_fast  "<<v_fast<<endl;
+    if(v_fast>0&&v_fast<30)v_fast=30;
+    x = center_x+v_fast*2*cos(angle*DEG2RAD);
+    y = center_y-v_fast*2*sin(angle*DEG2RAD);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 5);
+    //==================
     //===============
-    draw_ellipse(visual_map,(360-(dd_2*3)-90),(360-(dd_1*3)-90),close_line,Scalar(250,0,0),2);
+    draw_ellipse(visual_map,(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1.5);
+    //===============
+    draw_ellipse(visual_map,(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),1.5);
     angle = 360-(good_angle*3)-90;
     x = center_x+(close_line-20)*cos(angle*DEG2RAD);
     y = center_y-(close_line-20)*sin(angle*DEG2RAD);
@@ -82,16 +97,9 @@ cv::Mat Vision::draw_interface()
     //===============
     //cout<<"af_angle"<<af_angle<<endl;
     angle = int(360-(af_angle*3))-90;
-    x = center_x+af_line*cos(angle*DEG2RAD);
-    y = center_y-af_line*sin(angle*DEG2RAD);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0), 6);
-    //==================
-    //===============
-    //cout<<"final_angle"<<final_angle<<endl;
-    angle = int(360-(final_angle*3))-90;
-    x = center_x+final_line*cos(angle*DEG2RAD);
-    y = center_y-final_line*sin(angle*DEG2RAD);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 6);
+    x = center_x+v_af*cos(angle*DEG2RAD);
+    y = center_y-v_af*sin(angle*DEG2RAD);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0), 5);
     //==================
     //===========================
     //======draw the robot=======
@@ -122,8 +130,9 @@ cv::Mat Vision::draw_interface()
         }
     }
     //===========================
-    imshow("visual_map",visual_map);
+    imshow("visual_map", visual_map);
     waitKey(10);
+    Pub_avoidframe(visual_map);
     return visual_map;
 }
 

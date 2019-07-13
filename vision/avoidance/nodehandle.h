@@ -44,8 +44,8 @@ class NodeHandle
     vector<double> Angle_cos;
     int Frame_Area(int coordinate, int range);
     int Angle_Adjustment(int angle);
-    void Pub_whiteframe(Mat frame);
-    ros::Publisher whiteframe_pub;
+    void Pub_avoidframe(Mat frame);
+    ros::Publisher avoidframe_pub;
     vector <double> black_item_distance;
     vector <double> red_line_distance;
     //================center====================
@@ -64,12 +64,18 @@ class NodeHandle
     //========================================
     double df_1;
     double df_2;
+    double df_1_dis;
+    double df_2_dis;
     double far_good_angle;
     double dd_1;
     double dd_2;
+    double dd_1_dis;
+    double dd_2_dis;
     double good_angle;
     double final_angle;
     double af_angle;
+    double v_fast;
+    double v_af;
 
   private:
     ros::NodeHandle nh;

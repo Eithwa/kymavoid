@@ -33,6 +33,8 @@ struct ScanInfo
     int vacancy_number;
     int obstacle_number;
     int max_vacancy_number;
+    int move_right_dis;
+    int move_left_dis;
 };
 class FIRA_pathplan_class
 {
@@ -51,7 +53,7 @@ private:
     double vecAngle(Vector2d a,Vector2d b);
     void RoutePlan(ScanInfo &THIS);
     void connected();
-    int v_fast;
+    
     //end---utility---
 
 
@@ -135,7 +137,10 @@ public:
     double goalkeeper_front_speed;
     double goalkeeper_mid_speed;
     double goalkeeper_side_speed;
-    ////////////////////////////////////
+    
+    //=======avoid=========
+    int v_fast;
+    int v_af;
     double good_angle;
     double far_good_angle;
     double final_angle;
@@ -143,7 +148,14 @@ public:
     double num_change;
     double go_where_x;
     double go_where_y;
-    int dd_1,dd_2,df_1,df_2;
+    int df_1;
+    int df_1_dis;
+    int df_2;
+    int df_2_dis;
+    int dd_1;
+    int dd_1_dis;
+    int dd_2;
+    int dd_2_dis;
     int b_picture_m,avoid_go;
     int not_good_p;
     ros::Publisher tovision;
@@ -151,7 +163,8 @@ public:
     strategy::strategylook vision_per;
     double kp,ki,kd;
     void Pub_route();
-    ////////////////////////////////////
+    //=====================
+    
 
     std::vector<double> SPlanning_Velocity;
     std::vector<double> Distant;

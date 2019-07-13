@@ -9,7 +9,7 @@ NodeHandle::NodeHandle()
     blackdis_sub = nh.subscribe("/vision/BlackRealDis", 1000, &NodeHandle::blackdiscall, this);;
     reddis_sub = nh.subscribe("/vision/redRealDis", 1000, &NodeHandle::reddiscall, this);
     avoid_sub = nh.subscribe("/avoid/route", 1000, &NodeHandle::avoidcall, this);
-    whiteframe_pub = nh.advertise<sensor_msgs::Image>("/camera/white", 1);
+    avoidframe_pub = nh.advertise<sensor_msgs::Image>("/camera/avoid", 1);
 
     //http://localhost:8080/stream?topic=/camera/image_monitor webfor /camera/image
 }
@@ -91,12 +91,18 @@ void NodeHandle::reddiscall(const std_msgs::Int32MultiArray msg){
 void NodeHandle::avoidcall(const vision::avoid msg){
     df_1=msg.df_1;
     df_2=msg.df_2;
+    df_1_dis=msg.df_1_dis;
+    df_2_dis=msg.df_2_dis;
     far_good_angle=msg.far_good_angle;
     dd_1=msg.dd_1;
     dd_2=msg.dd_2;
+    dd_1_dis=msg.dd_1_dis;
+    dd_2_dis=msg.dd_2_dis;
     good_angle=msg.good_angle;
     final_angle=msg.final_angle;
     af_angle=msg.af_angle;
+    v_fast = msg.v_fast;
+    v_af=msg.v_af;
 }
 //========================distance=========================
 double NodeHandle::camera_f(double Omni_pixel)
@@ -125,8 +131,8 @@ double NodeHandle::Omni_distance(double pixel_dis)
     return dis;
 }
 //======================publisher==========================
-void NodeHandle::Pub_whiteframe(Mat frame)
+void NodeHandle::Pub_avoidframe(Mat frame)
 {
-    sensor_msgs::ImagePtr whiteframeMsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
-    whiteframe_pub.publish(whiteframeMsg);
+    sensor_msgs::ImagePtr frameMsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+    avoidframe_pub.publish(frameMsg);
 }

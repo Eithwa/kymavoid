@@ -8,6 +8,7 @@ NodeHandle::NodeHandle()
     save_sub = nh.subscribe("interface/bin_save", 1000, &NodeHandle::SaveButton_setting, this);
     blackframe_pub = nh.advertise<sensor_msgs::Image>("/camera/black", 1);
     blackdis_pub = nh.advertise<std_msgs::Int32MultiArray>("/vision/BlackRealDis", 1);
+    redframe_pub = nh.advertise<sensor_msgs::Image>("/camera/red", 1);
     red_pub = nh.advertise<std_msgs::Int32MultiArray>("/vision/redRealDis", 1);
     mpicture = nh.advertise<vision::visionlook>("/vision/picture_m", 1);
     //http://localhost:8080/stream?topic=/camera/image_monitor webfor /camera/image
@@ -123,6 +124,11 @@ void NodeHandle::Pub_blackframe(Mat frame)
 {
     sensor_msgs::ImagePtr blackframeMsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
     blackframe_pub.publish(blackframeMsg);
+}
+void NodeHandle::Pub_redframe(Mat frame)
+{
+    sensor_msgs::ImagePtr redframeMsg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
+    redframe_pub.publish(redframeMsg);
 }
 void NodeHandle::Pub_blackdis(std_msgs::Int32MultiArray distance)
 {

@@ -443,8 +443,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){//good_angle-b_goodangle=0? 不會進入判斷式
         //std::cout<<"fuuuuuuuuuuuuk"<<std::endl;
-        if(main_vec<60){//如果主向量大於60*3 
-            for(int i=1;i<=HowManyOk ;i++){//正算?
+        if(main_vec<60){//如果主向量大於60*3 如果有加imu的情況代表當前靠場地右邊走
+            for(int i=1;i<=HowManyOk ;i++){//正算? //選擇左邊的洞
                 if(Ok_place[i][1]-Ok_place[i][0]>5){//如果可走範圍大於5條線
                     right_ok=i;
                     printf("qqqqqqqqqqqqqqq\n");
@@ -459,7 +459,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                 tem_right_ok=good_angle;
            }
         }else{//如果主向量小於60*3 
-            for(int i=HowManyOk;i>=1 ;i--){//反算?
+            for(int i=HowManyOk;i>=1 ;i--){//反算? 　//選擇右邊的洞
                 if(Ok_place[i][1]-Ok_place[i][0]>5){
                     right_ok=i;
                     printf("ppppppppppppp\n");

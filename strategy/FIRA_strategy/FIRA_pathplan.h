@@ -163,6 +163,7 @@ public:
     strategy::strategylook vision_per;
     double kp,ki,kd;
     void Pub_route();
+    double Artificial_field(int main_vec, int close_dis, int RedLine, int red_dis_average, int dangerous_dis, int red_line_dangerous_dis);
     //=====================
     
 

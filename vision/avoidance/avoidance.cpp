@@ -40,7 +40,7 @@ double Vision::Rate()
     }
     return frame_rate;
 }
-void draw_ellipse(Mat &iframe,double angle_min, double angle_max, double ang_min_dis, double ang_max_dis, Scalar color, double width){
+void Vision::draw_ellipse(Mat &iframe, double main_angle, double angle_min, double angle_max, double ang_min_dis, double ang_max_dis, Scalar color, double width){
     int x1;
     int y1;
     int x2;
@@ -50,9 +50,24 @@ void draw_ellipse(Mat &iframe,double angle_min, double angle_max, double ang_min
     x1 = center_x+ang_max_dis*cos(angle_max*DEG2RAD);
     y1 = center_y-ang_max_dis*sin(angle_max*DEG2RAD);
     line(iframe, Point(center_x, center_y), Point(x1, y1), color, width);
+
     x2 = center_x+ang_min_dis*cos(angle_min*DEG2RAD);
     y2 = center_y-ang_min_dis*sin(angle_min*DEG2RAD);
     line(iframe, Point(center_x, center_y), Point(x2, y2), color, width);
+    //if(main_angle>angle_min&& main_angle<angle_max){
+        int angle = main_angle-180;
+        //int angle = 360-(good_angle*3)-90-180;
+        //int angle = (angle_min+angle_max)/2-180;
+        int x1_,y1_;
+        int x2_,y2_;
+        x1_ = x1+(ang_max_dis+50)*cos(angle*DEG2RAD);
+        y1_ = y1-(ang_max_dis+50)*sin(angle*DEG2RAD);
+        line(iframe, Point(x1_, y1_), Point(x1, y1), color, width);
+        x2_ = x2+(ang_min_dis+50)*cos(angle*DEG2RAD);
+        y2_ = y2-(ang_min_dis+50)*sin(angle*DEG2RAD);
+        line(iframe, Point(x2_, y2_), Point(x2, y2), color, width);
+    //}
+
     line(iframe, Point(x1, y1), Point(x2, y2), color, width);
     //ellipse(iframe, Point(center_x, center_y), Size(ang_max_dis, ang_max_dis), 0, 360 - angle_max, 360 - angle_min, color, width);
 }
@@ -87,9 +102,9 @@ cv::Mat Vision::draw_interface()
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 5);
     //==================
     //===============
-    draw_ellipse(visual_map,(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1.5);
+    draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1);
     //===============
-    draw_ellipse(visual_map,(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),1.5);
+    draw_ellipse(visual_map,(360-(good_angle*3)-90),(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),1);
     angle = 360-(good_angle*3)-90;
     x = center_x+(close_line-20)*cos(angle*DEG2RAD);
     y = center_y-(close_line-20)*sin(angle*DEG2RAD);
@@ -99,7 +114,7 @@ cv::Mat Vision::draw_interface()
     angle = int(360-(af_angle*3))-90;
     x = center_x+v_af*cos(angle*DEG2RAD);
     y = center_y-v_af*sin(angle*DEG2RAD);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0), 5);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(100,100,100), 4);
     //==================
     //===========================
     //======draw the robot=======

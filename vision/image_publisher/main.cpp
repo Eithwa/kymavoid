@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     signal(SIGINT, SigintHandler);
 
     Mat img = imread(TEST, CV_LOAD_IMAGE_COLOR);
-
+    cv::flip(img, img, 1);
     ros::Publisher img_pub = h_node.advertise<sensor_msgs::Image>("/camera/image_raw", 1);
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
 

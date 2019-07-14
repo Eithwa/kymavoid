@@ -472,7 +472,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //std::cout<<"inner.move_right: "<<inner.move_right<<"  inner.move_left: "<<inner.move_left<<std::endl;
     
     more_ok_line=0;save_ok_line=0;right_ok=0;
-    printf("=====================================\nhowmany_ok%d\n",HowManyOk);
+    //printf("=====================================\n");
+    printf("howmany_ok%d\n",HowManyOk);
     //print the obj and ok place
     for(int i=1 ; i<=HowManyOk ;i++){
         int ok_angle_text = (Ok_place[i][0]+Ok_place[i][1])/2;
@@ -672,7 +673,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     //===================================
     //=======引力斥力與中間相子case切換======
-    if(left_dis_average<45&&right_dis_average<45){//兩個箱子中間的case
+    if(left_dis_average+right_dis_average<90){
+    //if(left_dis_average<45&&right_dis_average<45){//兩個箱子中間的case
         std::cout<<"left_dis_average "<<left_dis_average<<"  right_dis_average  "<<right_dis_average<<std::endl;
         condition=box_in_between;
     }/*else if((smallfront <=42)&&(main_vec==40||main_vec==80)){
@@ -870,20 +872,24 @@ double FIRA_pathplan_class::Artificial_field(int main_vec, int close_dis, int Re
     double closest_angle=0;
     double closest_dis=999;
     for(int i=1 ; i<=artificial_field.vacancy_number ;i++){ //repulsive force 斥力
+        closest_dis=999;
         for(int j=artificial_field.obstacle[i][0] ; j<=artificial_field.obstacle[i][1] ; j++){
             if(env.blackdis[j]<close_dis && env.blackdis[j]<closest_dis){
                 if(j>0&&j<112){
                     if(abs(env.blackdis[j]-env.blackdis[j-1])<5 && abs(env.blackdis[j]-env.blackdis[j+1])<5){
+                        //std::cout<<"dis  "<<env.blackdis[j]<<" angle  "<<j<<std::endl;
                         closest_dis = env.blackdis[j];
                         closest_angle = j;
                     }
                 }
             }
         }
+        dis_average = closest_dis;
         if(dis_average<=dangerous_dis){//dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
             Obj_angle = (artificial_field.obstacle[i][0]+artificial_field.obstacle[i][1])/2;//遠離障礙物平均角度 （是否需改成最近位置角度?)
             printf("人工勢場 障礙物靠近 warn_B=%d,angle=%d\t,dis=%d\t",i,Obj_angle,dis_average);
-            angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
+            //angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
+            angle_average = (90-(closest_angle))*3;
             if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 人工勢場*0.8
                 Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
                 Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad)*0.8;

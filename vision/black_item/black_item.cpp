@@ -74,15 +74,15 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
                     //================Black obstacle detection========
                     black_binarization();
                     black_filter();
-                    black_item();
                 }
                 #pragma omp section
                 {
                     //================Red line detection==============
                     red_binarization();
-                    red_line();
                 }
             }
+            black_item();
+            red_line();
             Pub_blackframe(Black_Mask);
             Pub_redframe(Red_Mask);
             cv::imshow("black_item", Black_Mask);
@@ -297,6 +297,12 @@ void Vision::black_item()
     int center_x = CenterXMsg;
     int center_y = CenterYMsg;
     
+    //for (int i = 0; i < Main_frame.rows; i++)
+    //{
+      //  for (int j = 0; j < Main_frame.cols; j++)
+       //{
+        //}
+    //}
     for (int angle = 0; angle < 360; angle = angle + black_angle)
     {
         int angle_be = angle + center_front;

@@ -93,7 +93,8 @@ void NodeHandle::avoidcall(const vision::avoid msg){
     df_2=msg.df_2;
     df_1_dis=msg.df_1_dis;
     df_2_dis=msg.df_2_dis;
-    far_good_angle=msg.far_good_angle;
+    //far_good_angle=msg.far_good_angle;
+    far_good_angle = (df_1+df_2)/2;
     dd_1=msg.dd_1;
     dd_2=msg.dd_2;
     dd_1_dis=msg.dd_1_dis;

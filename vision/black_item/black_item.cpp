@@ -288,21 +288,30 @@ void Vision::black_item()
     int object_dis;
     std::vector<double>blackItem_pixel;
     std_msgs::Int32MultiArray BlackRealDis;
-    Mat binarization_map = Black_Mask.clone();
-    int black_angle = BlackAngleMsg;
-    //int black_angle = 3;//避障策略只能三度一條掃描線
+   
+    //int black_angle = BlackAngleMsg;
+    int black_angle = 3;//避障策略只能三度一條掃描線
     int center_front = FrontMsg;
     int center_inner = InnerMsg;
     int center_outer = OuterMsg;
     int center_x = CenterXMsg;
     int center_y = CenterYMsg;
     
-    //for (int i = 0; i < Main_frame.rows; i++)
-    //{
-      //  for (int j = 0; j < Main_frame.cols; j++)
-       //{
-        //}
-    //}
+    for (int i = 0; i < Black_Mask.rows; i++)
+    {
+        for (int j = 0; j < Black_Mask.cols; j++)
+        {
+            if (Red_Mask.data[(i * Red_Mask.cols + j) * 3 + 0] == 0 
+             && Red_Mask.data[(i * Red_Mask.cols + j) * 3 + 1] == 0 
+             && Red_Mask.data[(i * Red_Mask.cols + j) * 3 + 2] == 0){
+                Black_Mask.data[(i * Black_Mask.cols + j) * 3 + 0] = 0;
+                Black_Mask.data[(i * Black_Mask.cols + j) * 3 + 1] = 0;
+                Black_Mask.data[(i * Black_Mask.cols + j) * 3 + 2] = 255;
+            }
+            
+        }
+    }
+    Mat binarization_map = Black_Mask.clone();
     for (int angle = 0; angle < 360; angle = angle + black_angle)
     {
         int angle_be = angle + center_front;
@@ -322,7 +331,8 @@ void Vision::black_item()
 
             if (binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 0] == 0 
              && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 1] == 0 
-             && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 2] == 0)
+             && (binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 2] == 0
+             || binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 2] == 255))
             {
                 blackItem_pixel.push_back(hypot(dis_x, dis_y));
                 break;

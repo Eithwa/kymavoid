@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <launch> 
  <rosparam command="load" file="$(find fira_launch)/default_config/AvoidChallenge.yaml"/>
- <node name="prosilica_driver" pkg="prosilica_camera" type="prosilica_node" respawn="true" respawn_delay="5" output="screen"/>
+ <!--node name="prosilica_driver" pkg="prosilica_camera" type="prosilica_node" respawn="true" respawn_delay="5" output="screen"/-->
  <!--node name="objectdetection" pkg="vision" type="objectdetection"  respawn="true" respawn_delay="5" output="screen"/-->
  <node name="interface" pkg="vision" type="interface" respawn="false"/>
  <!--node name="FIRA_strategy" pkg="strategy" type="FIRA_strategy"/-->

@@ -821,7 +821,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             int angle_min = (good_angle-25>0)?good_angle-25:0;
             int angle_max = (good_angle+25>118)?good_angle+25:118;
             for(int i=angle_min; i<angle_max; i++){
-                if(env.blackdis[i]<40){
+                if(env.blackdis[i]<45){
                     v_fast=1;
                 }
                 //if(abs(good_angle-i)<20&&env.blackdis[i]<80){

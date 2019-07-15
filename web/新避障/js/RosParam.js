@@ -77,12 +77,33 @@ ParamGraySetBox.get(function(value) {
     }
 });
 //=======================================================================
+//obj_filter_size
+var Paramfilter = new ROSLIB.Param({
+    ros: ros,
+    name: '/FIRA/blackItem/obj_filter_size'
+});
+
+function ParamFilterSet() {
+    //GraySet
+    console.log("obj_filter_size", parseFloat(obj[6].value));
+    Paramfilter.set(parseFloat(obj[6].value));
+}
+//getParam
+Paramfilter.get(function(value) {
+    if (value != null) {
+        obj = document.getElementsByName("ParameterElement");
+        obj[6].value = value;
+    }
+});
+//=======================================================================
 //Save
 
 function RosSaveParam() {
     RosParamSP();
     RosParamDistant();
-    ParamGraySet()
+    ParamGraySet();
+    ParamFilterSet();
+    setTimeout(topicROSSaveButton(),1000);
 }
 
 //=======================================================================

@@ -1,4 +1,16 @@
+#bg {
+    position: relative;
+    top: -15px;
+    
+}
+#SafeSwitch {
+    position: relative;
+    top: -15px;
+}
 #StartButton {
+    position: relative;
+    top: -13px;
+    left: -45px;
     background-image: none;
     /*background-color: #99CCFF;*/
     font-size: 17px;
@@ -22,6 +34,7 @@
 /*==========================================================*/
 
 #StopButton {
+    top: -13px;
     background-image: none;
     /*background-color: #99CCFF;*/
     font-size: 17px;

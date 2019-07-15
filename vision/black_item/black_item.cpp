@@ -11,6 +11,7 @@ Vision::Vision(string topic)
     obj_filter_size=500;
     HorizonMsg=150;
     setgray=10;
+    Parameter_getting();
     image_sub = nh.subscribe(topic, 1, &Vision::imageCb, this);
     FrameRate = 0.0;
 }
@@ -202,7 +203,7 @@ void Vision::black_filter()
     int inner = InnerMsg, outer = OuterMsg, centerx = CenterXMsg, centery = CenterYMsg;
     int detection_range = HorizonMsg;
     int width = Black_Mask.cols-1, length = Black_Mask.rows-1;
-    obj_filter_size =500;
+    //obj_filter_size =500;
     int obj_size = obj_filter_size;
     //cout<<obj_filter_size<<endl;
     

@@ -29,7 +29,7 @@
 
 </head>
 
-<body onload="joystick_main();OldGameState();SimulatorFalse();StrategyStop();ParamAvoidGo(0)">
+<body onload="joystick_main();OldGameState();SimulatorFalse();StrategyStop();ParamAvoidGo(0);init_img()">
     <div class="modal-dialog modalBackground">
         <div class="modal-content modalCotentStyle">
             <div class="modal-body modalBodyStyle">
@@ -44,7 +44,30 @@
                     </div>
                 </div>
                 <div class="form-group" align="center" id="BallGround">
-                    <img src="img/AvGround.jpg" id="GroundImage"></img>
+                    <!--img src="img/AvGround.jpg" id="GroundImage"></img-->
+                    <div id="MapArea">
+                        <tr>
+                            <td >
+                                <input type="Button" value="black" onclick="vision_monitor(1)" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <input type="Button" value="red" onclick="vision_monitor(2)" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <input type="Button" value="avoid" onclick="vision_monitor(3)" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td >
+                                <input type="Button" value="close" onclick="vision_monitor(0)" />
+                            </td>
+                        </tr>
+                        <img id="canvasMap" ></img>
+                    </div>
                     <div id="SwitchButttonDiv">
                         <table>
                             <tr>
@@ -122,8 +145,14 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>obj_filter_size</td>
+                            <td>
+                                <input type="text" name="ParameterElement" value="500" />
+                            </td>
+                        </tr>
+                        <tr>
                             <td colspan="2">
-                                <input type="Button" value="Sent" onclick="RosSaveParam()" />
+                                <input type="Button" value="Save" onclick="RosSaveParam()" />
                             </td>
                         </tr>
                     </table>
@@ -193,6 +222,7 @@
     <script src="js/RobotConnect.js"></script>
     <script src="js/RosTopic.js"></script>
     <script src="js/RosParam.js"></script>
+    <script src="js/video.js"></script>
     <script src="js/KeyboardControl.js"></script>
     <script src="js/SafeSwitch.js"></script>
     <script src="js/Joystick.js"></script>

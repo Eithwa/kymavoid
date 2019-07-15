@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     ros::Publisher img_pub = h_node.advertise<sensor_msgs::Image>("/camera/image_raw", 1);
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", img).toImageMsg();
 
-    ros::Rate loop_rate(60); //Image transfer speed(hz)
+    ros::Rate loop_rate(5); //Image transfer speed(hz)
     while (ros::ok())
     {
         img_pub.publish(msg);

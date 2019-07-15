@@ -17,6 +17,14 @@ body {
 	*/
     font-family: 'Pacifico', cursive;
 }
+#canvasMap {
+    position: relative;
+    width: 364px;
+    height: 260px;
+    top: 0px;
+    left: 0px;
+
+}
 #SpeedDiv {
     width: 185px;
     height: 60px;

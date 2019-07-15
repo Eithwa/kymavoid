@@ -18,7 +18,6 @@ class Vision : protected NodeHandle
     double Rate();
     double FrameRate;
 
-    int obj_filter_size;
     void black_binarization();
     void black_filter();
     void black_item();

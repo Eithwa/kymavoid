@@ -1,5 +1,5 @@
 Camera: {Focal: 13.971313932573906, High: 650.0}
-Center: {Camera_high: 654, Center_X: 298, Center_Y: 253, Front: 272, Horizon: 157,
+Center: {Camera_high: 654, Center_X: 298, Center_Y: 253, Front: 272, Horizon: 139,
   Inner: 36, Outer: 230, X: 308, Y: 266}
 FPS: 16
 HSV:

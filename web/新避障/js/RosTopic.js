@@ -134,3 +134,16 @@ function OpenSimulator(checked) {
         TopicIsSimulator.publish(temp);
     }
 }
+//save
+var TopicSaveButton = new ROSLIB.Topic({
+    ros: ros,
+    name: '/interface/bin_save',
+    messageType: '/vision/bin'
+});
+function topicROSSaveButton(value) {
+    console.log("Save parameter");
+    var SaveButton = new ROSLIB.Message({
+        bin: 64
+    });
+    TopicSaveButton.publish(SaveButton);
+}

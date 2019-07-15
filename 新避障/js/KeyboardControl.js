@@ -137,6 +137,9 @@ function keysdown(e) {
                 $('#StartInput').change();
                 $('#StopInput').prop('checked',true);
                 $('#StopInput').change();
+                if(safe_weitch_checked==false){
+                    alert("尚未解鎖");
+                }
             }
         }
     }
@@ -157,9 +160,6 @@ function keysdown(e) {
 // }
 
 function keyuped(e) {
-    //if(safe_weitch_checked==false){
-    //    alert("尚未解鎖");
-    //}
     if (KeyboardStart&&safe_weitch_checked) {
         console.log("start moving speed: %d", speed);
         if (keys[e.keyCode] == true) releasebutton(e.keyCode);

@@ -179,8 +179,8 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int vacancy_number=0;
     int vacancy_size=99;
 
-    //for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
-    for(int i= 0; i<=118 ; i++){
+    for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
+    //for(int i= 0; i<=118 ; i++){
         //若黑線小於far dis(250) 且黑線大於中層的距離 或者紅線小於最遠距離 b_ok = false
         if(THIS.type == OUTER){
             is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
@@ -470,8 +470,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
     //=======未始用outer window數值=========
     far_good_angle=main_vec;
-    mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
-    mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
+    // mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
+    // mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
+    mainRight=(int)((main_vec+35)>90)?90:main_vec+35;
+    mainLeft=(int)((main_vec-35)<30)?30:main_vec-35;
     //====================================
     ScanInfo inner;
     inner.type = INNER;
@@ -718,7 +720,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }*/else{
         condition=N_S;
     }
-
+    //condition=N_S;
     count+=1;
     static double before_error_x=0,I_error_x=0;
     static double Fx_pid,Fy_pid,PID_I_tem[20]={0} ;
@@ -814,18 +816,20 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         if((forward_dis_average>100)&&(HowManyBoj<=1)&&((40<main_vec)&&(main_vec<80))/*||(condition==box_in_between)*/){
             v_fast=v_fast+5;v_fast=(v_fast<100)?v_fast:100;
         }else{
-            v_fast=50;
+            v_fast=80;
             //v_fast=(v_fast>1)?v_fast:1;
-            int angle_min = (good_angle-30>0)?good_angle-30:0;
-            int angle_max = (good_angle+30>118)?good_angle+30:118;
+            int angle_min = (good_angle-25>0)?good_angle-25:0;
+            int angle_max = (good_angle+25>118)?good_angle+25:118;
             for(int i=angle_min; i<angle_max; i++){
-                if(env.blackdis[i]<50){
+                if(env.blackdis[i]<40){
                     v_fast=1;
-                    break;
                 }
+                //if(abs(good_angle-i)<20&&env.blackdis[i]<80){
+                //    v_fast=1;
+                //}
             }
             if(condition==box_in_between){
-                v_fast=50;
+                v_fast=80;
             }
             
         }
@@ -941,8 +945,10 @@ double FIRA_pathplan_class::Artificial_field(int main_vec, int close_dis, int Re
         //angle_average = (90-(Obj_angle))*3;//(90-(56+50)/2)*3=111
         angle_average = (90-(closest_angle))*3;
         if(((Obj_angle<30)||(Obj_angle>90))/*&&((main_vec!=80)&&(main_vec!=40))*/){//障礙物角度大於左右90度 人工勢場*0.8
-            Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
-            Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad)*0.8;
+            //Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad)*0.8;//[53]->angle 53  //角度乘以0.8？
+            //Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad)*0.8;
+            Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad);//[53]->angle 53  //角度乘以0.8？
+            Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad);
         }else{
             Fx += (dangerous_dis-dis_average)*cos(angle_average*deg2rad);//[53]->angle 53
             Fy += (dangerous_dis-dis_average)*sin(angle_average*deg2rad);

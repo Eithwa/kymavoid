@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <launch> 
  <rosparam command="load" file="$(find fira_launch)/default_config/AvoidChallenge.yaml"/>
- <node name="prosilica_driver" pkg="prosilica_camera" type="prosilica_node" respawn="true" respawn_delay="5" output="screen"/>
+ <!--node name="prosilica_driver" pkg="prosilica_camera" type="prosilica_node" respawn="true" respawn_delay="5" output="screen"/-->
  <!--node name="objectdetection" pkg="vision" type="objectdetection"  respawn="true" respawn_delay="5" output="screen"/-->
  <!--node name="interface" pkg="vision" type="interface" respawn="false"/-->
  <!--node name="FIRA_strategy" pkg="strategy" type="FIRA_strategy"/-->
@@ -10,6 +10,6 @@
  <node name="strategy_param_server" pkg="param_convey" type="strategy_param_server"/>
  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" respawn="true" respawn_delay="5"/>
  <node name="black_item" pkg="vision" type="black_item" respawn="true" respawn_delay="1"/>
- <node name="avoidance" pkg="vision" type="avoidance" respawn="true" respawn_delay="1"/>
+ <!--node name="avoidance" pkg="vision" type="avoidance" respawn="true" respawn_delay="1"/-->
  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
 </launch>

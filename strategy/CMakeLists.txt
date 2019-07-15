@@ -49,6 +49,7 @@ foreach(subdir
     common
     FIRA_strategy
     FIRA_teamStrategy
+    FIRA_strategy_old
     )
   add_subdirectory(${subdir})
 endforeach()

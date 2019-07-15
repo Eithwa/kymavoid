@@ -79,9 +79,9 @@ cv::Mat Vision::draw_interface()
     int center_y = visual_map.rows/2;
     int robot_radius = 20;
     //======draw avoid route=====
-    int angle_max;
-    int angle_min;
-    int angle;
+    double angle_max;
+    double angle_min;
+    double angle;
     int far_line = 250;
     int close_line = 200;
     int final_line = 200;
@@ -94,15 +94,27 @@ cv::Mat Vision::draw_interface()
     x = center_x+final_line*cos(angle*DEG2RAD);
     y = center_y-final_line*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 7);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,255,255), 6);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,255,255), 6);    
     //cout<<"v_fast  "<<v_fast<<endl;
     if(v_fast>0&&v_fast<30)v_fast=30;
     x = center_x+v_fast*2*cos(angle*DEG2RAD);
     y = center_y-v_fast*2*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 5);
+    int x1,y1,x2,y2;
+    int final_rl = 100;
+    x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
+    y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
+    x2 = x1+final_rl*cos(angle*DEG2RAD);
+    y2 = y1-final_rl*sin(angle*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(255,200,0), 1);
+    x1 = center_x+robot_radius*cos((angle-90)*DEG2RAD);
+    y1 = center_y-robot_radius*sin((angle-90)*DEG2RAD);
+    x2 = x1+final_rl*cos(angle*DEG2RAD);
+    y2 = y1-final_rl*sin(angle*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(255,200,0), 1);
     //==================
     //===============
-    draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1);
+    //draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1);
     //===============
     draw_ellipse(visual_map,(360-(good_angle*3)-90),(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),1);
     angle = 360-(good_angle*3)-90;
@@ -114,7 +126,7 @@ cv::Mat Vision::draw_interface()
     angle = int(360-(af_angle*3))-90;
     x = center_x+v_af*cos(angle*DEG2RAD);
     y = center_y-v_af*sin(angle*DEG2RAD);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(100,100,100), 4);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(211,102,160), 2);
     //==================
     //===========================
     //======draw the robot=======

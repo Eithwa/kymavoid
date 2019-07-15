@@ -106,6 +106,10 @@ function ParamAvoidGo(state) {
     console.log(state);
     if(safe_weitch_checked==false&&state==1){
         alert("尚未解鎖");
+        $('#StartInput').prop('checked',false);
+        $('#StartInput').change();
+        $('#StopInput').prop('checked',true);
+        $('#StopInput').change();
     }
     if (CheckIP[0] == 1){
         if(state == 0){

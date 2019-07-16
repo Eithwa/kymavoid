@@ -1,14 +1,15 @@
 function init_img(){
     var video = document.getElementById("canvasMap");
     //video.src = "img/AvGround.jpg";
-    video.src = "img/white.png";
-    video.style.width = "74.3%";
+    video.src = "img/AvGround.jpg";
+    video.style.width = "100%";
     //setTimeout(function(){video.src = "http://" + document.getElementById("RobotIP").value + ":8080/stream?topic=/camera/black";},100);
 }
 function vision_monitor(value){
     var video = document.getElementById("canvasMap");
     if(value==0){
-        video.src = "img/white.png";
+        video.src = "img/AvGround.jpg";
+        video.style.width = "100%";
     }
     if(value==1){
         video.src = "img/black.png";

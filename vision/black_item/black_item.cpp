@@ -322,7 +322,7 @@ void Vision::black_item()
 
         double x_ = Angle_cos[angle_be];
         double y_ = Angle_sin[angle_be];
-        for (int r = center_inner - 1; r <= center_outer; r++)
+        for (int r = center_inner; r <= center_outer; r++)
         {
             int dis_x = x_ * r;
             int dis_y = y_ * r;

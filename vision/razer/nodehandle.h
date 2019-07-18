@@ -81,6 +81,9 @@ class NodeHandle
     double v_af;
     //============laser scan=================
     vector<double> ranges;
+    vector<double> ranges2;
+    vector<double> ranges3;
+    vector<double> ranges4;
 
   private:
     ros::NodeHandle nh;
@@ -89,9 +92,15 @@ class NodeHandle
     ros::Subscriber reddis_sub;
     ros::Subscriber avoid_sub;
     ros::Subscriber scan_sub;
+    ros::Subscriber scan_sub2;
+    ros::Subscriber scan_sub3;
+    ros::Subscriber scan_sub4;
     void blackdiscall(const std_msgs::Int32MultiArray msg);
     void reddiscall(const std_msgs::Int32MultiArray msg);
     void avoidcall(const vision::avoid msg);
     void SaveButton_setting(const vision::bin msg);
     void scancall(const sensor_msgs::LaserScan msg);
+    void scancall2(const sensor_msgs::LaserScan msg);
+    void scancall3(const sensor_msgs::LaserScan msg);
+    void scancall4(const sensor_msgs::LaserScan msg);
 };

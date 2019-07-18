@@ -6,7 +6,10 @@ NodeHandle::NodeHandle()
     AngleLUT();
 
     save_sub = nh.subscribe("/interface/bin_save", 1000, &NodeHandle::SaveButton_setting, this);
-    scan_sub = nh.subscribe("/scan", 1000, &NodeHandle::scancall, this);
+    scan_sub = nh.subscribe("/hokuyo_1/scan", 1000, &NodeHandle::scancall, this);
+    scan_sub2 = nh.subscribe("/hokuyo_2/scan", 1000, &NodeHandle::scancall2, this);
+    scan_sub3 = nh.subscribe("/hokuyo_3/scan", 1000, &NodeHandle::scancall3, this);
+    scan_sub4 = nh.subscribe("/hokuyo_4/scan", 1000, &NodeHandle::scancall4, this);
     blackdis_sub = nh.subscribe("/vision/BlackRealDis", 1000, &NodeHandle::blackdiscall, this);;
     reddis_sub = nh.subscribe("/vision/redRealDis", 1000, &NodeHandle::reddiscall, this);
     avoid_sub = nh.subscribe("/avoid/route", 1000, &NodeHandle::avoidcall, this);
@@ -109,6 +112,21 @@ void NodeHandle::avoidcall(const vision::avoid msg){
 void NodeHandle::scancall(const sensor_msgs::LaserScan msg){
     ranges.clear();
     ranges.assign(msg.ranges.begin(), msg.ranges.end());
+    //cout<<"size: "<<ranges.size()<<endl;
+}
+void NodeHandle::scancall2(const sensor_msgs::LaserScan msg){
+    ranges2.clear();
+    ranges2.assign(msg.ranges.begin(), msg.ranges.end());
+    //cout<<"size: "<<ranges.size()<<endl;
+}
+void NodeHandle::scancall3(const sensor_msgs::LaserScan msg){
+    ranges3.clear();
+    ranges3.assign(msg.ranges.begin(), msg.ranges.end());
+    //cout<<"size: "<<ranges.size()<<endl;
+}
+void NodeHandle::scancall4(const sensor_msgs::LaserScan msg){
+    ranges4.clear();
+    ranges4.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;
 }
 //========================distance=========================

@@ -40,6 +40,24 @@ double Vision::Rate()
     }
     return frame_rate;
 }
+void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<double> ranges, Scalar color){
+    int center_x = visual_map.cols/2;
+    int center_y = visual_map.rows/2;
+    Point tf;
+    tf.x = sensor_distance*cos((sensor_angle+90)*DEG2RAD);
+    tf.y = -sensor_distance*sin((sensor_angle+90)*DEG2RAD);
+    circle(visual_map, Point(center_x+tf.x, center_y+tf.y), 4, Scalar(255,0,0), -1);
+    if(ranges.size()>0){
+        double black_angle = (double)270/ranges.size();
+        for(int i=0; i<ranges.size(); i++){
+            double angle = black_angle*i+sensor_angle-45;
+            double distance = ranges.at(i)*100;
+            double x = center_x+tf.x+distance*cos(angle*DEG2RAD);
+            double y = center_y+tf.y-distance*sin(angle*DEG2RAD);
+            circle(visual_map, Point(x, y), 1, color, -1);
+        }
+    }
+}
 void Vision::draw_ellipse(Mat &iframe, double main_angle, double angle_min, double angle_max, double ang_min_dis, double ang_max_dis, Scalar color, double width){
     int x1;
     int y1;
@@ -78,24 +96,24 @@ cv::Mat Vision::draw_interface()
     int center_x = visual_map.cols/2;
     int center_y = visual_map.rows/2;
     int robot_radius = 20;
-    int razer_offset = 15;
     //===========================
     //======draw the robot=======
-    circle(visual_map, Point(center_x, center_y), 2, Scalar(255, 0, 0), -1);
-    circle(visual_map, Point(center_x, center_y+razer_offset), robot_radius, Scalar(255, 0, 0), 1);
-    line(visual_map, Point(center_x, center_y+razer_offset), Point(center_x, center_y+razer_offset-robot_radius), Scalar(255,0,0), 1);
+    
+    circle(visual_map, Point(center_x, center_y), robot_radius, Scalar(255, 0, 0), 1);
+    line(visual_map, Point(center_x, center_y), Point(center_x, center_y-robot_radius), Scalar(255,0,0), 1);
     //===========================
     //====draw the black item====
-    if(ranges.size()>0){
-        double black_angle = (double)270/ranges.size();
-        for(int i=0; i<ranges.size(); i++){
-            double angle = black_angle*i-45;
-            double distance = ranges.at(i)*100;
-            double x = center_x+distance*cos(angle*DEG2RAD);
-            double y = center_y-distance*sin(angle*DEG2RAD);
-            circle(visual_map, Point(x, y), 1, Scalar(0, 0, 0), -1);
-        }
-    }
+    int sensor1_angle = 0;
+    int sensor1_distance = 15;
+    draw_scan(visual_map, sensor1_angle, sensor1_distance, ranges, Scalar(0,0,0));
+    //============
+    int sensor2_angle = 60;
+    int sensor2_distance = 20;
+    draw_scan(visual_map, sensor2_angle, sensor2_distance, ranges2, Scalar(0,0,0));
+    //============
+    int sensor3_angle = 180;
+    int sensor3_distance = 15;
+    draw_scan(visual_map, sensor3_angle, sensor3_distance, ranges3, Scalar(255,0,0));
     //===========================
     int center_front = 90;
     int black_angle = 3;
@@ -123,7 +141,7 @@ cv::Mat Vision::draw_interface()
             int dis_y = y_ * r;
 
             int image_x = Frame_Area(center_x + dis_x, binarization_map.cols);
-            int image_y = Frame_Area(center_y+razer_offset - dis_y, binarization_map.rows);
+            int image_y = Frame_Area(center_y - dis_y, binarization_map.rows);
 
             if (binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 0] == 0 
              && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 1] == 0 

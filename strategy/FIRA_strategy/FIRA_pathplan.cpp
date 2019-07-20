@@ -266,6 +266,29 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             max_vacancy_number=i;
         }
     }
+    //解決區域最佳解,若兩空間大小相差小於2條線 選擇離goodangle較近的空間
+    int close_vacancy_number=0;
+    int close_angle=999;
+    int close_size=0;
+    size = 0;
+    if(THIS.type==INNER){
+        for(int i=1 ; i<=vacancy_number ;i++){
+            size=vacancy[i][1]-vacancy[i][0];
+            center_angle = (vacancy[i][1]+vacancy[i][0])/2;
+            
+            if(abs(center_angle-good_angle)<close_angle&&
+                center_angle>THIS.scan_left&&
+                center_angle<THIS.scan_right){
+                close_angle = center_angle;
+                close_vacancy_number=i;
+                close_size=size;
+            }
+        }
+    }
+    if(abs(max_size-close_size)<3){
+        max_vacancy_number = close_vacancy_number;
+    }
+    //==========================================
     THIS.max_vacancy_number = max_vacancy_number;
     THIS.move_left  = vacancy[max_vacancy_number][0];
     THIS.move_right = vacancy[max_vacancy_number][1];
@@ -709,9 +732,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //===================================
     //=======引力斥力與中間相子case切換======
     std::cout<<"left_closest_dis  "<<left_closest_dis<<"    right_closest_dis  "<<right_closest_dis<<std::endl;
-    if(left_dis_average<45&&right_dis_average<45&&abs(left_closest_dis-right_closest_dis)<6){
+    //if(left_dis_average<45&&right_dis_average<45&&abs(left_closest_dis-right_closest_dis)<6){
+    if((left_closest_dis+right_closest_dis)<90){
     //if(left_dis_average<45&&right_dis_average<45){//兩個箱子中間的case
-        std::cout<<"left_dis_average "<<left_dis_average<<"  right_dis_average  "<<right_dis_average<<std::endl;
+        //std::cout<<"left_dis_average "<<left_dis_average<<"  right_dis_average  "<<right_dis_average<<std::endl;
         condition=box_in_between;
     }/*else if((smallfront <=42)&&(main_vec==40||main_vec==80)){
         condition = red_line;

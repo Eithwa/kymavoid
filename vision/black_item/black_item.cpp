@@ -86,9 +86,9 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
             red_line();
             Pub_blackframe(Black_Mask);
             Pub_redframe(Red_Mask);
-            cv::imshow("black_item", Black_Mask);
-            cv::imshow("red_line", Red_Mask);
-            cv::waitKey(1);
+            //cv::imshow("black_item", Black_Mask);
+            //cv::imshow("red_line", Red_Mask);
+            //cv::waitKey(1);
             //=======================FPS======================
             FrameRate = Rate();
             //================================================

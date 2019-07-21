@@ -114,7 +114,7 @@ cv::Mat Vision::draw_interface()
     line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(255,200,0), 1);
     //==================
     //===============
-    //draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1);
+    draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),1);
     //===============
     draw_ellipse(visual_map,(360-(good_angle*3)-90),(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),1);
     angle = 360-(good_angle*3)-90;
@@ -157,8 +157,8 @@ cv::Mat Vision::draw_interface()
         }
     }
     //===========================
-    imshow("visual_map", visual_map);
-    waitKey(10);
+    //imshow("visual_map", visual_map);
+    //waitKey(10);
     Pub_avoidframe(visual_map);
     return visual_map;
 }

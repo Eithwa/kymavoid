@@ -104,6 +104,7 @@ function RosSaveParam() {
     ParamGraySet();
     ParamFilterSet();
     setTimeout(topicROSSaveButton(),1000);
+    setTimeout(savecall(),1000);
 }
 
 //=======================================================================

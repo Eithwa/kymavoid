@@ -10,7 +10,7 @@ bool dump(param_convey::strategy_param::Request  &req,
     ROS_INFO("Updating infos...");
     std::string PackagePath = ros::package::getPath("fira_launch"); 
     // std::cout << PackagePath << "\n";
-    std::string path = "rosparam dump "+PackagePath+"/default_config/vision_better.yaml";
+    std::string path = "rosparam dump "+PackagePath+"/default_config/AvoidChallenge.yaml";
     const char *path_dump = path.c_str();
     system(path_dump);
     ROS_INFO("Update Success!");

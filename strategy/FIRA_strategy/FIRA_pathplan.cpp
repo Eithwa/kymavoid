@@ -266,6 +266,29 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             max_vacancy_number=i;
         }
     }
+    //解決區域最佳解,若兩空間大小相差小於2條線 選擇離goodangle較近的空間
+    int close_vacancy_number=0;
+    int close_angle=999;
+    int close_size=0;
+    size = 0;
+    if(THIS.type==INNER){
+        for(int i=1 ; i<=vacancy_number ;i++){
+            size=vacancy[i][1]-vacancy[i][0];
+            center_angle = (vacancy[i][1]+vacancy[i][0])/2;
+            
+            if(abs(center_angle-good_angle)<close_angle&&
+                center_angle>THIS.scan_left&&
+                center_angle<THIS.scan_right){
+                close_angle = center_angle;
+                close_vacancy_number=i;
+                close_size=size;
+            }
+        }
+    }
+    if(abs(max_size-close_size)<3){
+        max_vacancy_number = close_vacancy_number;
+    }
+    //==========================================
     THIS.max_vacancy_number = max_vacancy_number;
     THIS.move_left  = vacancy[max_vacancy_number][0];
     THIS.move_right = vacancy[max_vacancy_number][1];
@@ -454,8 +477,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     df_2 = outer.move_right;
     df_1_dis=outer.move_left_dis;
     df_2_dis=outer.move_right_dis;
-    far_good_angle =(outer.max_vacancy_number==0)?90:(df_1+df_2)/2;
-    far_good_angle=(far_good_angle+main_vec)/2;
+    far_good_angle =(outer.max_vacancy_number==0)?90:outer.move_main;
+    //far_good_angle=(far_good_angle+main_vec)/2;
 
 
     // std::cout<<"df_1: "<<df_1<<"  df_2:"<<df_2<<std::endl;
@@ -469,7 +492,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
     mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
     //=======未始用outer window數值=========
-    far_good_angle=main_vec;
+    //far_good_angle=main_vec;
     // mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
     // mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
     mainRight=(int)((main_vec+35)>90)?90:main_vec+35;
@@ -584,15 +607,15 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //==========================
     b_goodangle=two_ok_right;//two_ok_right 等於 good_angle
 
-    dd_1=Ok_place[right_ok][0];
-    dd_2=Ok_place[right_ok][1];
+    // dd_1=Ok_place[right_ok][0];
+    // dd_2=Ok_place[right_ok][1];
     
     // if(dd_1>0)dd_1_dis=env.blackdis[dd_1-1];
     // else dd_1_dis=env.blackdis[dd_1];
     // if(dd_2<119)dd_2_dis=env.blackdis[dd_2+1];
     // else dd_2_dis=env.blackdis[dd_2];
-    dd_1_dis = inner.move_left_dis;
-    dd_2_dis = inner.move_right_dis;
+    //dd_1_dis = inner.move_left_dis;
+    //dd_2_dis = inner.move_right_dis;
 
     int x1,x2,y1,y2;
     x1 = dd_1_dis*cos(dd_1*3*DEG2RAD);
@@ -709,9 +732,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //===================================
     //=======引力斥力與中間相子case切換======
     std::cout<<"left_closest_dis  "<<left_closest_dis<<"    right_closest_dis  "<<right_closest_dis<<std::endl;
-    if(left_dis_average<45&&right_dis_average<45&&abs(left_closest_dis-right_closest_dis)<6){
+    //if(left_dis_average<45&&right_dis_average<45&&abs(left_closest_dis-right_closest_dis)<6){
+    if((left_closest_dis+right_closest_dis)<90){
     //if(left_dis_average<45&&right_dis_average<45){//兩個箱子中間的case
-        std::cout<<"left_dis_average "<<left_dis_average<<"  right_dis_average  "<<right_dis_average<<std::endl;
+        //std::cout<<"left_dis_average "<<left_dis_average<<"  right_dis_average  "<<right_dis_average<<std::endl;
         condition=box_in_between;
     }/*else if((smallfront <=42)&&(main_vec==40||main_vec==80)){
         condition = red_line;
@@ -731,7 +755,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     v_af = 0;
     switch(condition){
     case N_S://人工勢場 
-        final_angle = Artificial_field(main_vec, close_dis, RedLine, red_dis_average, dangerous_dis, red_line_dangerous_dis);
+        final_angle = Artificial_field(inner, outer, main_vec, close_dis, RedLine, red_dis_average, dangerous_dis, red_line_dangerous_dis);
         break;
     case box_in_between:
         if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
@@ -821,7 +845,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             int angle_min = (good_angle-25>0)?good_angle-25:0;
             int angle_max = (good_angle+25>118)?good_angle+25:118;
             for(int i=angle_min; i<angle_max; i++){
-                if(env.blackdis[i]<45){
+                if(env.blackdis[i]<45&&condition!=box_in_between){
                     v_fast=1;
                 }
                 //if(abs(good_angle-i)<20&&env.blackdis[i]<80){
@@ -829,7 +853,9 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                 //}
             }
             if(condition==box_in_between){
-                v_fast=80;
+                v_fast=v_fast+5;v_fast=(v_fast<80)?v_fast:80;
+                //v_fast=80;
+
             }
             
         }
@@ -853,7 +879,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     printf("FB_xx=%lf\t,FB_err=%lf\t\n",FB_XX,fb_error);
     std::cout<<"=========================END=============================\n";
 }
-double FIRA_pathplan_class::Artificial_field(int main_vec, int close_dis, int RedLine, int red_dis_average, int dangerous_dis, int red_line_dangerous_dis){
+double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int main_vec, int close_dis, int RedLine, int red_dis_average, int dangerous_dis, int red_line_dangerous_dis){
     int Boj_place[30][2]={0};
     int Ok_place[30][2];//最多儲存30個空間
     int line_cont_b=99,line_cont_ok=99,b_ok=1,continuedline_ok=0,continuedline_b=0;//b_ok=1可以走b_ok=0黑色
@@ -961,16 +987,44 @@ double FIRA_pathplan_class::Artificial_field(int main_vec, int close_dis, int Re
     dis_average=999;
     if(RedLine!=0){//有偵測到紅線
         //printf("紅線靠近 RedLine=%d\tred_dis_average=%d\n",RedLine,red_dis_average);
-        if(RedLine==2){
-            red_dis_average=red_line_dangerous_dis-red_dis_average;
-        }else{
-            red_dis_average=red_dis_average-red_line_dangerous_dis;
+        if(RedLine==2){//左邊紅線
+            int closest_distance = 999;
+            for(int i= 60 ; i<=60+45 ; i++){//right_dis_average //右側計算
+                if(env.blackdis[i]<50&&env.blackdis[i]>0){
+                    closest_distance = env.blackdis[i];
+                }
+            }
+            if(closest_distance<50){
+                red_dis_average=0;
+            }else{
+                red_dis_average=red_line_dangerous_dis-red_dis_average;
+            }
+        }else{//右邊紅線
+            int closest_distance = 999;
+            for(int i= 60-45 ; i<=60; i++){//right_dis_average //左側計算
+                if(env.blackdis[i]<50&&env.blackdis[i]>0){
+                    closest_distance = env.blackdis[i];
+                }
+            }
+            if(closest_distance<50){
+                red_dis_average=0;
+            }else{
+                red_dis_average=red_dis_average-red_line_dangerous_dis;
+            }
         }
     }
     //==============================
-    final_Fx = F_Max*cos((90-(good_angle))*3*deg2rad)-adjust_ojF*Fx-(0.2*red_dis_average);
-    final_Fy = F_Max*sin((90-(good_angle))*3*deg2rad)-adjust_ojF*Fy;
+    int main_angle;
+    if(outer.move_left>inner.move_left&&outer.move_right<inner.move_right){
+        main_angle = far_good_angle;
+    }else{
+        main_angle = good_angle;
+    }
+    //if(closest_dis<80){
+    final_Fx = F_Max*cos((90-(main_angle))*3*deg2rad)-adjust_ojF*Fx-(0.2*red_dis_average);
+    final_Fy = F_Max*sin((90-(main_angle))*3*deg2rad)-adjust_ojF*Fy;
     final_angle= 90-(atan2(final_Fy,final_Fx)*180/pi)/3;
+    
     printf("人工勢場 S/N========  ");
     //==============================
     return final_angle;

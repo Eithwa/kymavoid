@@ -1,18 +1,18 @@
 AvoidChallenge:
   ChooseSide: [0, 1, 0.05, 0.04]
   Distant: [60, 90, 250]
-  FinalAngle: 39.0
-  GoodAngle: 42.0
+  FinalAngle: 58.0
+  GoodAngle: 60.0
   GraySet: 10
   IsSimulator: [0]
   Line: [18, 5, 6, 6, 5, 5, 8]
   SPlanning_Velocity: [100, 0.3, 35, 15, 1, 1, 144, 5]
   avoid_go: 0
   dd_1: 30
-  dd_2: 60
-  df_1: 64
-  df_2: 80
-  far_good_angle: 72.0
+  dd_2: 90
+  df_1: 40
+  df_2: 77
+  far_good_angle: 58.0
   kd: 0
   ki: 0
   kp: 1
@@ -36,6 +36,7 @@ FIRA:
     Yellowrange: [360, 0, 255, 0, 255, 0]
   RobotNumber: 1
   SPlanning_Velocity: [2.3, 0.3, 100, 60, 15, 5, 144, 5]
+  
   SideSpeedUp: [0.73, 1.2, 0.7, 5, 17.6]
   TypeS_Attack: [1.2, 0.2]
   TypeU_Attack: [0.8, 1, -90, 90, 0.6, 0.3, 10, 20]
@@ -45,8 +46,8 @@ FIRA:
   picture_m: 576
   vision:
     Camera: {Focal: 13.971313932573906, High: 650.0}
-    Center: {Camera_high: 654, Center_X: 302, Center_Y: 246, Front: 272, Horizon: 139,
-      Inner: 40, Outer: 229, X: 308, Y: 266}
+    Center: {Camera_high: 654, Center_X: 302, Center_Y: 243, Front: 272, Horizon: 139,
+      Inner: 37, Outer: 230, X: 308, Y: 266}
     FPS: 33
     HSV:
       Ball: [313, 44, 23, 100, 21, 100]
@@ -85,12 +86,3 @@ prosilica_driver: {auto_adjust_stream_bytes_per_second: true, auto_exposure: fal
   whitebalance_red: 100, width: 640, x_offset: 0, y_offset: 0}
 rosbridge_websocket: {address: '', authenticate: false, delay_between_messages: 0,
   fragment_timeout: 600, max_message_size: None, port: 9090, retry_startup_delay: 5}
-rosdistro: 'indigo
-
-  '
-roslaunch:
-  uris: {host_iarc__39889: 'http://iarc:39889/', host_iarc__46542: 'http://iarc:46542/'}
-rosversion: '1.11.21
-
-  '
-run_id: ed3bccda-ad91-11e9-9851-b8aeed7b4f81

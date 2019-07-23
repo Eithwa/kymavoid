@@ -266,7 +266,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             max_vacancy_number=i;
         }
     }
-    //解決區域最佳解,若兩空間大小相差小於2條線 選擇離goodangle較近的空間
+    //解決區域最佳解,若兩空間大小相差小於4條線 選擇離goodangle較近的空間
     int close_vacancy_number=0;
     int close_angle=999;
     int close_size=0;
@@ -285,7 +285,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             }
         }
     }
-    if(abs(max_size-close_size)<3){
+    if(abs(max_size-close_size)<4){
         max_vacancy_number = close_vacancy_number;
     }
     //==========================================

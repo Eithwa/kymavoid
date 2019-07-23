@@ -1,6 +1,6 @@
 Camera: {Focal: 13.971313932573906, High: 650.0}
-Center: {Camera_high: 654, Center_X: 302, Center_Y: 243, Front: 272, Horizon: 139,
-  Inner: 37, Outer: 230, X: 308, Y: 266}
+Center: {Camera_high: 654, Center_X: 302, Center_Y: 246, Front: 272, Horizon: 139,
+  Inner: 40, Outer: 229, X: 308, Y: 266}
 FPS: 33
 HSV:
   Ball: [313, 44, 23, 100, 21, 100]

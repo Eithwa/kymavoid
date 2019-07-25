@@ -1,0 +1,2 @@
+roslaunch nubot_gazebo avoid_robot.launch
+rosrun scan_tf scan_tf

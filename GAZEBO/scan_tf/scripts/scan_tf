@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-+
+
+""" ros """
+import roslib
+roslib.load_manifest('scan_tf')
+import rospy
+import rospkg
+
+""" lib """
+from lib.nh.nodehandle import NodeHandle
+
+
+def main():
+    rospy.init_node('scan_tf', anonymous=True)
+    
+    nh = NodeHandle()
+    rate = rospy.Rate(30)
+    while not rospy.is_shutdown():
+        rate.sleep()
+
+if __name__ == '__main__':
+    main()

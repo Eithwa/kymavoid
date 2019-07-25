@@ -33,7 +33,7 @@ void Strategy_nodeHandle::ros_comms_init(){
     std::string robotPos_suffix = Robot_Position_Topic_Suffix;
 
     //gazebo_ModelStates subscriber
-    Gazebo_Model_Name_sub = n->subscribe<gazebo_msgs::ModelStates>(ModelState_Topic_Name,1000,&Strategy_nodeHandle::find_gazebo_model_name_fun,this);
+    //Gazebo_Model_Name_sub = n->subscribe<gazebo_msgs::ModelStates>(ModelState_Topic_Name,1000,&Strategy_nodeHandle::find_gazebo_model_name_fun,this);
 
     //Is Gazebo simulation mode?
     IsSimulator = n->subscribe<std_msgs::Int32>(IsSimulator_Topic,1000,&Strategy_nodeHandle::subIsSimulator,this);
@@ -74,7 +74,11 @@ void Strategy_nodeHandle::ros_comms_init(){
 
     //one_Robot speed publish
     std::string robotSpeed= Robot_Topic_Speed;
-    robot_speed_pub = n->advertise<geometry_msgs::Twist>(Robot_Topic_Speed,1000);
+    #ifndef GAZEBO_SIMULATOR
+        robot_speed_pub = n->advertise<geometry_msgs::Twist>(Robot_Topic_Speed,1000);
+    #else
+        robot_speed_pub = n->advertise<nubot_common::VelCmd>("nubot1/nubotcontrol/velcmd",1000);
+    #endif
 
     //std::cout << "PersonalStrategy ros_comms_init() finish" << std::endl;
 
@@ -160,12 +164,19 @@ void Strategy_nodeHandle::rotateXY(double rotate,double inX,double inY,double &n
 void Strategy_nodeHandle::pubSpeed(ros::Publisher *puber,double v_x,double v_y,double v_yaw,double robot_rot){
     double r_v_x,r_v_y;
     rotateXY(robot_rot,v_x,v_y,r_v_x,r_v_y);//relatively 2 absolutely
-
-    geometry_msgs::Twist speedMsg;
-    //=====simulator use=====
-    speedMsg.linear.x = /*r_*/-v_x;
-    speedMsg.linear.y = /*r_*/v_y;
-    speedMsg.angular.z = v_yaw ;
+    #ifndef GAZEBO_SIMULATOR
+        geometry_msgs::Twist speedMsg;
+        //=====simulator use=====
+        speedMsg.linear.x = /*r_*/-v_x;
+        speedMsg.linear.y = /*r_*/v_y;
+        speedMsg.angular.z = v_yaw ;
+    #else
+        nubot_common::VelCmd speedMsg;
+        //=====simulator use=====
+        speedMsg.Vx = /*r_*/v_y;
+        speedMsg.Vy = /*r_*/v_x;
+        speedMsg.w = v_yaw ;
+    #endif
 //    speedMsg.linear.x = 0;
 //    speedMsg.linear.y = 0;
 //    speedMsg.angular.z = 0 ;
@@ -174,15 +185,19 @@ void Strategy_nodeHandle::pubSpeed(ros::Publisher *puber,double v_x,double v_y,d
 //    speedMsg.linear.y = /*r_*/v_x;
 //    speedMsg.angular.z = v_yaw ;
 //    std::cout << "yaw="<< speedMsg.angular.z << std::endl;
-    if(issimulator==true){
-      speedMsg.linear.x = /*r_*/v_y;
-      speedMsg.linear.y = /*r_*/-v_x;
-      puber->publish(speedMsg);
-    }else if(issimulator==false){
-
+    #ifndef GAZEBO_SIMULATOR
+        if(issimulator==true){
+            speedMsg.linear.x = /*r_*/v_y;
+            speedMsg.linear.y = /*r_*/-v_x;
+            puber->publish(speedMsg);
+        }else if(issimulator==false){
+            velocity_S_planning(&speedMsg);
+            puber->publish(speedMsg);
+    }
+    #else
         velocity_S_planning(&speedMsg);
         puber->publish(speedMsg);
-    }
+    #endif
 }
 
 void Strategy_nodeHandle::velocity_S_planning(geometry_msgs::Twist *msg){
@@ -240,6 +255,61 @@ void Strategy_nodeHandle::velocity_S_planning(geometry_msgs::Twist *msg){
         }
         msg->angular.z = Tangle;
 //    std::cout<<"yaw = "<<msg->angular.z <<"\tmsg->linear.x ="<<msg->linear.x <<"\tmsg->linear.y ="<<msg->linear.y<< "\tangle="<<alpha<<std::endl;
+}
+
+void Strategy_nodeHandle::velocity_S_planning(nubot_common::VelCmd *msg){
+    double Vdis = hypot(msg->Vx,msg->Vy);
+    double alpha = atan(-msg->Vx/msg->Vy)*rad2deg;
+    if(msg->Vy>0){
+        if(msg->Vx>0)
+            alpha+=180;
+        else
+            alpha-=180;
+    }
+//    std::cout << "alpha="<<alpha<<std::endl;
+    double angle = msg->w * rad2deg;
+    bool IsVectorZero=0;
+    double Vdis_max = SPlanning_Velocity[0];//3
+    double Vdis_min = SPlanning_Velocity[1];//0.3
+    double VTdis_max = SPlanning_Velocity[2];//60
+    double VTdis_min = SPlanning_Velocity[3];//30
+    double VTdis;
+    double Tangle_max = SPlanning_Velocity[4];// 20
+    double angle_max = SPlanning_Velocity[6];//144;
+    double Tangle_min = SPlanning_Velocity[5];//3
+    double angle_min = SPlanning_Velocity[7];
+    double Tangle;
+////Transfer vector to [0,100]
+    if(Vdis==0)
+        IsVectorZero=1;
+    else if(Vdis>Vdis_max)
+        VTdis=VTdis_max;
+    else if(Vdis<Vdis_min)
+        VTdis=VTdis_min;
+    else
+        VTdis = (VTdis_max-VTdis_min)*(cos(pi*((Vdis-Vdis_min)/(Vdis_max-Vdis_min)-1))+1)/2+VTdis_min;
+////Transfer yaw to [0,100]
+    if(fabs(angle)<0.1)
+        Tangle=0;
+    else if(fabs(angle)>angle_max)
+        Tangle=Tangle_max;
+    else if(fabs(angle)<angle_min)
+        Tangle=Tangle_min;
+    else
+        Tangle=(Tangle_max-Tangle_min)*(cos(pi*((fabs(angle)-angle_min)/(angle_max-angle_min)-1))+1)/2+Tangle_min;
+//// [-100,100]
+    if(angle<0)
+        Tangle = -Tangle;
+    if(IsVectorZero){
+        msg->Vx = 0;
+        msg->Vy = 0;
+    }else{
+        msg->Vx = VTdis*sin(alpha*deg2rad);
+        msg->Vy = -VTdis*cos(alpha*deg2rad);
+        // msg->Vx = VTdis*cos(alpha*deg2rad);
+        // msg->Vy = VTdis*sin(alpha*deg2rad);
+    }
+        msg->w = Tangle;
 }
 
 void Strategy_nodeHandle::pubGrpSpeed(){

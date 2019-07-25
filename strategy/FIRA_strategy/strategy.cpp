@@ -151,7 +151,8 @@ int main(int argc, char **argv)
         if(global_env->teamcolor == "Blue")Team_color = Team_Blue;
         else if(global_env->teamcolor == "Yellow")Team_color = Team_Yellow;
         global_env->gameState = mNodeHandle.getGameState();
-        global_env->issimulator=mNodeHandle.getIsSimulator();
+        //global_env->issimulator=mNodeHandle.getIsSimulator();
+        global_env->issimulator= false;
         shoot_value = mpathplan.getShoot();
         //ROS_INFO("shoot_value=%d",shoot_value);
         if(shoot_value>0){
@@ -165,7 +166,7 @@ int main(int argc, char **argv)
         mbehavior.setTeam(Team_color);
         if((global_env->issimulator)==true){
             //ROS_INFO("GAGAGAGAGGAGAGGAGAGA");
-            for(int i=0; i<PLAYERS_PER_SIDE;i++){
+            /*for(int i=0; i<PLAYERS_PER_SIDE;i++){
                 mbehavior.readroleAry(i,roleAry[i]);
             }
             actionAry = mbehavior.getactionAry();
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
             mpathplan.setTeam(Team_color);
             for(int i=0; i<PLAYERS_PER_SIDE;i++){
                 mpathplan.personalStrategy(i,actionAry[i]);
-            }
+            }*/
         }
         else if((global_env->issimulator)==false){
             //BlackObject
@@ -192,7 +193,7 @@ int main(int argc, char **argv)
         Environment* tEnv = mpathplan.getEnv();
 
         if((global_env->issimulator)==true){
-            for(int i = 0;i < PLAYERS_PER_SIDE;i++){
+           /* for(int i = 0;i < PLAYERS_PER_SIDE;i++){
                 global_env->home[i].v_x = tEnv->home[i].v_x;
                 global_env->home[i].v_y = tEnv->home[i].v_y;
                 global_env->home[i].v_yaw = tEnv->home[i].v_yaw*deg2rad;
@@ -210,7 +211,7 @@ int main(int argc, char **argv)
             //    double t_y=tEnv->home[i].v_y;
             //    double t_yaw=tEnv->home[i].v_yaw;
             //    printf("v_x=%lf,v_y=%lf,v_yaw=%lf\n",t_x,t_y,t_yaw);
-            }
+            }*/
         }
         else if((global_env->issimulator)==false){
             global_env->home[global_env->RobotNumber].v_x = tEnv->home[global_env->RobotNumber].v_x;

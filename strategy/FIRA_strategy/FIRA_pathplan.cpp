@@ -102,7 +102,6 @@ void FIRA_pathplan_class::personalStrategy(int robotIndex,int action){
         break;
     case Role_Halt:
         strategy_AvoidBarrier(robotIndex);
-        //std::cout<<"fuckkkkkkkkkk"<<std::endl;
         //strategy_Halt(robotIndex);
         break;
     }
@@ -187,8 +186,8 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
         if(THIS.type == OUTER){
             is_vacancy=((env.blackdis[i] <= far_dis)&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis))?false:true;
         }else if(THIS.type == INNER){
-            //is_vacancy=((env.blackdis[i] <= halfclose_dis)||(env.reddis[i]<=250))?false:true;
-            is_vacancy=((env.blackdis[i] <= 80))?false:true;
+            is_vacancy=((env.blackdis[i] <= halfclose_dis)/* ||(env.reddis[i]<=250)*/)?false:true;
+            //is_vacancy=((env.blackdis[i] <= 80))?false:true;
         }else if(THIS.type == ARTIFICIAL_FIELD){
             is_vacancy=(env.blackdis[i] <= close_dis+20)?false:true;
         }else{
@@ -263,11 +262,14 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
         center_angle = (vacancy[i][1]+vacancy[i][0])/2;
         if(size>max_size&&
             center_angle>THIS.scan_left&&
-            center_angle<THIS.scan_right){
+            center_angle<THIS.scan_right&&
+            center_angle<90&&
+            center_angle>30){
             max_size=size;
             max_vacancy_number=i;
         }
     }
+    //std::cout<<"center_angle   "<<center_angle<<std::endl;
     //解決區域最佳解,若兩空間大小相差小於4條線 選擇離goodangle較近的空間
     int close_vacancy_number=0;
     int close_angle=999;
@@ -280,7 +282,9 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
             
             if(abs(center_angle-good_angle)<close_angle&&
                 center_angle>THIS.scan_left&&
-                center_angle<THIS.scan_right){
+                center_angle<THIS.scan_right&&
+                center_angle<(90+5)&&
+                center_angle>(30-5)){
                 close_angle = center_angle;
                 close_vacancy_number=i;
                 close_size=size;
@@ -372,6 +376,9 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     //     }
     // }
     //==============
+    if(THIS.type==INNER){
+        std::cout<<"THIS.move_left  "<<THIS.move_left<<"  THIS.move_right  "<<THIS.move_right<<std::endl;
+    }
     //角度規劃 避免碰撞
     int robot_radius = 20;
     double left_angle_tmp=0;
@@ -441,7 +448,6 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     double close_dis = Distant[0];//60 speed (10) //54  speed (30,10)
     double halfclose_dis = Distant[1];//80
     double far_dis=Distant[2];//200
-
     static int RedLine = 0; //紅線判斷flag 1left 2right
     ////主要向量範圍
     static int main_vec=60;//60*3 定180為車頭角
@@ -496,14 +502,19 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     line_cont_b=99;line_cont_ok=99;b_ok=1;continuedline_ok=0;continuedline_b=0;//b_ok=1可以走b_ok=0黑色
     HowManyBoj=0;HowManyOk=0;
 
-    mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
-    mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
+    //mainRight=(int)(far_good_angle+20>90)?90:far_good_angle+20;
+    //mainLeft=(int)(far_good_angle-20<30)?30:far_good_angle-20;
     //=======未始用outer window數值=========
     //far_good_angle=main_vec;
-    // mainRight=(int)((main_vec+25)>90)?90:main_vec+25;
-    // mainLeft=(int)((main_vec-25)<30)?30:main_vec-25;
-    mainRight=(int)((main_vec+35)>90)?90:main_vec+35;
-    mainLeft=(int)((main_vec-35)<30)?30:main_vec-35;
+     mainRight=(int)((main_vec+25)>(90+5))?(90+5):main_vec+25;
+     mainLeft=(int)((main_vec-25)<(30-5))?(30-5):main_vec-25;
+    //int find_range = 50;
+    //mainRight=(int)((main_vec+find_range)>90)?90:main_vec+find_range;
+    //mainLeft=(int)((main_vec-find_range)<30)?30:main_vec-find_range;
+    //mainRight=main_vec+find_range;
+    //mainLeft=main_vec-find_range;
+    //mainRight = 0;
+    //mainLeft = 119;
     //====================================
     ScanInfo inner;
     inner.type = INNER;
@@ -525,6 +536,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     dd_1 = inner.move_left;
     dd_2 = inner.move_right;
+    std::cout<<"THIS.dd1  "<<inner.move_left<<"  THIS.dd2  "<<inner.move_right<<std::endl;
     dd_1_dis=inner.move_left_dis;
     dd_2_dis=inner.move_right_dis;
     good_angle = (int)(inner.max_vacancy_number==0)?90:(dd_1+dd_2)/2;
@@ -555,74 +567,76 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     //解決局部最佳解 強制走某一個方向
     //=================
-    // static int intoflag=0,tem_right_ok=0,okokcont=0,two_ok_right=60,b_goodangle=60;
-    // int near_angle=999,test_angle;
-    // two_ok_right=good_angle;
-    // if(intoflag==1){
-    //     //初始連接黑線資料顯示14個cont的時間 之後都不會進入flag
-    //     //printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
-    //     printf("局部最佳解\n");
-    //     intoflag=(count-okokcont<14)?1:0;
-    //     for(int i=1;i<=HowManyOk ;i++){
-    //         dd_1=Ok_place[i][1];
-    //         dd_2=Ok_place[i][0];
-    //         test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;//跟good_angle一樣?
-    //         std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
-    //         if(near_angle>abs(test_angle-tem_right_ok)){//test_angle-tem_right_ok=0?
-    //             near_angle=abs(test_angle-tem_right_ok);
-    //             good_angle=test_angle;
-    //             std::cout<<near_angle<<"/////"<<good_angle<<"\n";
-    //         }
-    //     }
-    // }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){//good_angle-b_goodangle=0? 不會進入判斷式
-    //     //std::cout<<"fuuuuuuuuuuuuk"<<std::endl;
-    //     if(main_vec<60){//如果主向量大於60*3 當前靠場地右邊走
-    //         for(int i=1;i<=HowManyOk ;i++){//正算? //選擇左邊的洞
-    //             if(Ok_place[i][1]-Ok_place[i][0]>5){//如果可走範圍大於5條線
-    //                 right_ok=i;
-    //                 //printf("qqqqqqqqqqqqqqq\n");
-    //                 printf("選擇左邊的洞\n");
-    //                 intoflag=1;
-    //                 okokcont=count;
-    //                 dd_1=Ok_place[right_ok][1];
-    //                 dd_2=Ok_place[right_ok][0];
-    //                 good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-    //                 tem_right_ok=good_angle;
-    //                 break;
-    //             }
-    //             tem_right_ok=good_angle;
-    //        }
-    //     }else{//如果主向量小於60*3 
-    //         for(int i=HowManyOk;i>=1 ;i--){//反算? 　//選擇右邊的洞
-    //             if(Ok_place[i][1]-Ok_place[i][0]>5){
-    //                 right_ok=i;
-    //                 //printf("ppppppppppppp\n");
-    //                 printf("選擇右邊的洞\n");
-    //                 intoflag=1;
-    //                 okokcont=count;
-    //                 dd_1=Ok_place[right_ok][1];
-    //                 dd_2=Ok_place[right_ok][0];
-    //                 good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
-    //                 tem_right_ok=good_angle;
-    //                 break;
-    //             }
-    //             tem_right_ok=good_angle;
-    //         }
-    //     }
-    //     // good_angle=b_goodangle;
-    // }
-    // //==========================
-    // b_goodangle=two_ok_right;//two_ok_right 等於 good_angle
+    static int intoflag=0,tem_right_ok=0,okokcont=0,two_ok_right=60,b_goodangle=60;
+    int near_angle=999,test_angle;
+    two_ok_right=good_angle;
+    if(intoflag==1){
+        //初始連接黑線資料顯示14個cont的時間 之後都不會進入flag
+        //printf("qpqpqpqpqpqpqpqpqpqpqpqpqpqp\n");
+        printf("局部最佳解\n");
+        intoflag=(count-okokcont<14)?1:0;
+        for(int i=1;i<=HowManyOk ;i++){
+            dd_1=Ok_place[i][1];
+            dd_2=Ok_place[i][0];
+            test_angle=(int)(i==0)?90:(dd_1+dd_2)/2;//跟good_angle一樣?
+            std::cout<<test_angle<<"\t"<<tem_right_ok<<"\n";
+            if(near_angle>abs(test_angle-tem_right_ok)){//test_angle-tem_right_ok=0?
+                near_angle=abs(test_angle-tem_right_ok);
+                good_angle=test_angle;
+                std::cout<<near_angle<<"/////"<<good_angle<<"\n";
+            }
+        }
+    }else if((abs((int)good_angle-b_goodangle)>28)&&(intoflag==0)){//good_angle-b_goodangle=0? 不會進入判斷式
+        //std::cout<<"fuuuuuuuuuuuuk"<<std::endl;
+        if(main_vec<60){//如果主向量大於60*3 當前靠場地右邊走
+            for(int i=1;i<=HowManyOk ;i++){//正算? //選擇左邊的洞
+                if(Ok_place[i][1]-Ok_place[i][0]>5){//如果可走範圍大於5條線
+                    right_ok=i;
+                    //printf("qqqqqqqqqqqqqqq\n");
+                    printf("選擇左邊的洞\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                    tem_right_ok=good_angle;
+                    break;
+                }
+                tem_right_ok=good_angle;
+           }
+        }else{//如果主向量小於60*3 
+            for(int i=HowManyOk;i>=1 ;i--){//反算? 　//選擇右邊的洞
+                if(Ok_place[i][1]-Ok_place[i][0]>5){
+                    right_ok=i;
+                    //printf("ppppppppppppp\n");
+                    printf("選擇右邊的洞\n");
+                    intoflag=1;
+                    okokcont=count;
+                    dd_1=Ok_place[right_ok][1];
+                    dd_2=Ok_place[right_ok][0];
+                    good_angle=(int)(right_ok==0)?90:(dd_1+dd_2)/2;
+                    tem_right_ok=good_angle;
+                    break;
+                }
+                tem_right_ok=good_angle;
+            }
+        }
+        // good_angle=b_goodangle;
+    }
+    //==========================
+    b_goodangle=two_ok_right;//two_ok_right 等於 good_angle
 
-    // dd_1=Ok_place[right_ok][0];
-    // dd_2=Ok_place[right_ok][1];
-    
-    // if(dd_1>0)dd_1_dis=env.blackdis[dd_1-1];
-    // else dd_1_dis=env.blackdis[dd_1];
-    // if(dd_2<119)dd_2_dis=env.blackdis[dd_2+1];
-    // else dd_2_dis=env.blackdis[dd_2];
-    //dd_1_dis = inner.move_left_dis;
-    //dd_2_dis = inner.move_right_dis;
+    dd_1=Ok_place[right_ok][0];
+    dd_2=Ok_place[right_ok][1];
+    if(inner.move_main>(90+5)||inner.move_main<(30-5)){
+        inner.move_main = (dd_1+dd_2)/2;
+    }
+    if(dd_1>0)dd_1_dis=env.blackdis[dd_1-1];
+    else dd_1_dis=env.blackdis[dd_1];
+    if(dd_2<119)dd_2_dis=env.blackdis[dd_2+1];
+    else dd_2_dis=env.blackdis[dd_2];
+    dd_1_dis = inner.move_left_dis;
+    dd_2_dis = inner.move_right_dis;
 
     int x1,x2,y1,y2;
     x1 = dd_1_dis*cos(dd_1*3*DEG2RAD);
@@ -634,9 +648,9 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
     //good_angle=(int)(hole_size<40)?90:(dd_1+dd_2)/2;
     //good_angle=(int)(hole_size<40)?90:inner.move_main;
-    good_angle=(int)(hole_size<40)?90:inner.move_main;
+    good_angle=(int)(hole_size<50)?30:inner.move_main;
     //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
-    
+    std::cout<<"dd1.dd1  "<<dd_1<<"  dd2.dd2  "<<dd_2<<std::endl;
 
     ////////////////////////////////////////////////////////////test for strategy
     
@@ -838,6 +852,12 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     /////////////////////////////////////////////////////////////////////////////////////
     printf("final_angle=%lf\n",final_angle);
     static int b_not_good_p=0;
+    int max_speed = SPlanning_Velocity[2];
+    int min_speed = SPlanning_Velocity[3];
+    double speed = 0;
+    if(v_fast>0)speed = max_speed*(v_fast/100);
+    double slowdown_distance = speed*2;
+    if (slowdown_distance<50)slowdown_distance=50;
     //=========每5count做一次速度規劃=======
     //if((int)count%5==1){
         if(b_not_good_p==not_good_p){ 
@@ -856,6 +876,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             int angle_min = (good_angle-25>0)?good_angle-25:0;
             int angle_max = (good_angle+25>118)?good_angle+25:118;
             for(int i=angle_min; i<angle_max; i++){
+                if(env.blackdis[i]<slowdown_distance)v_fast=v_fast-1;
                 if(env.blackdis[i]<close_dis&&condition!=box_in_between){
                     v_fast=1;
                 }
@@ -965,7 +986,6 @@ double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int
             if(env.blackdis[j]<close_dis && env.blackdis[j]<closest_dis){
                 if(j>0&&j<112){
                     if(abs(env.blackdis[j]-env.blackdis[j-1])<5 && abs(env.blackdis[j]-env.blackdis[j+1])<5){
-                        //if(env.blackdis[j]<close_dis)std::cout<<"fuck<close_dis\n";
                         //std::cout<<"dis  "<<env.blackdis[j]<<" angle  "<<j<<std::endl;
                         closest_dis = env.blackdis[j];
                         closest_angle = j;
@@ -1009,11 +1029,11 @@ double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int
         if(RedLine==2){//左邊紅線
             int closest_distance = 999;
             for(int i= 60 ; i<=60+45 ; i++){//right_dis_average //右側計算
-                if(env.blackdis[i]<50&&env.blackdis[i]>0){
+                if(env.blackdis[i]<closest_distance){
                     closest_distance = env.blackdis[i];
                 }
             }
-            if(closest_distance<50){
+            if(closest_distance<60){
                 red_dis_average=0;
             }else{
                 red_dis_average=red_line_dangerous_dis-red_dis_average;
@@ -1021,11 +1041,11 @@ double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int
         }else{//右邊紅線
             int closest_distance = 999;
             for(int i= 60-45 ; i<=60; i++){//right_dis_average //左側計算
-                if(env.blackdis[i]<50&&env.blackdis[i]>0){
+                if(env.blackdis[i]<closest_distance){
                     closest_distance = env.blackdis[i];
                 }
             }
-            if(closest_distance<50){
+            if(closest_distance<60){
                 red_dis_average=0;
             }else{
                 red_dis_average=red_dis_average-red_line_dangerous_dis;
@@ -1034,27 +1054,44 @@ double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int
     }
     //==============================
     int main_angle;
-    if(outer.move_left>inner.move_left&&outer.move_right<inner.move_right){
-        main_angle = far_good_angle;
-    }else{
+    //if(outer.move_left>inner.move_left&&outer.move_right<inner.move_right){
+    //    main_angle = far_good_angle;
+    //}else{
         main_angle = good_angle;
-    }
+    //}
     //if(closest_dis<80){
     final_Fx = F_Max*cos((90-(main_angle))*3*deg2rad)-adjust_ojF*Fx-(0.2*red_dis_average);
     final_Fy = F_Max*sin((90-(main_angle))*3*deg2rad)-adjust_ojF*Fy;
     final_angle= 90-(atan2(final_Fy,final_Fx)*180/pi)/3;
+
+    double shift_flag = false;
+    for(int i=(60-15);i<(60+15);i++){
+        if(env.blackdis[i]<50)shift_flag=true;
+    }
+    
+
     int angle_range=3;
     if(condition==box_in_between){
-        std::cout<<"fuck"<<abs(final_angle-af_angle)<<std::endl;
-         std::cout<<"final_angle  "<<final_angle<<"  af_angle  "<<af_angle<<std::endl;
-        if(abs(final_angle-af_angle)<(30-angle_range)){
+        //std::cout<<"final_angle  "<<final_angle<<"  af_angle  "<<af_angle<<std::endl;
+        if(abs(good_angle-af_angle)>(30-5)){
+            if(good_angle>af_angle)final_angle = good_angle-3;
+            if(good_angle<af_angle)final_angle = good_angle+3;
+        }
+        if(abs(final_angle-af_angle)<(30-angle_range) && abs(good_angle-af_angle)>30){
             
             if(final_angle>af_angle)final_angle=af_angle+30-3;
             if(final_angle<af_angle)final_angle=af_angle-30+3;
         }
     }
-    if(final_angle>90+3)final_angle=90+3;
-    if(final_angle<30-3)final_angle=30-3;
+    if(final_angle>(90-10) && shift_flag==true){
+        final_angle=90;
+    }
+    if(final_angle<(30+10) && shift_flag==true){
+        final_angle=30;
+    }
+
+    //if(final_angle>90+3)final_angle=90+3;
+    //if(final_angle<30-3)final_angle=30-3;
     
     //==============================
     return final_angle;
@@ -1138,4 +1175,9 @@ void FIRA_pathplan_class::loadParam(ros::NodeHandle *n){
         //     std::cout<< "param AvoidChallenge Distant["<< i << "]=" << Distant[i] << std::endl;
         // std::cout << "====================================" << std::endl;
     }
+    if(n->getParam("/AvoidChallenge/SPlanning_Velocity", SPlanning_Velocity)){
+//         for(int i=0;i<8;i++)
+//             std::cout<< "param SPlanning_Velocity["<< i << "]=" << SPlanning_Velocity[i] << std::endl;
+//     std::cout << "====================================" << std::endl;
+     }
 }

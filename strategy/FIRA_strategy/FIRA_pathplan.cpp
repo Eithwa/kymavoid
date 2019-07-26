@@ -7,12 +7,14 @@
 FIRA_pathplan_class::FIRA_pathplan_class(){
     opponent = false;
     v_fast = 50;
+    not_good_p=0;
     for(int i=0; i<360; i++){
         env.blackdis[i]=0;
     }
     //回傳策略線向量給影像
     tovision  = nh.advertise<strategy::strategylook>("/vision/strategy_line",1);
     route_pub = nh.advertise<vision::avoid>("/avoid/route",1);
+    //nh.setParam("/AvoidChallenge/avoid_go",0);
 }
 //start---simulator---
 void FIRA_pathplan_class::setEnv(Environment iEnv){
@@ -153,8 +155,9 @@ void FIRA_pathplan_class::connected(){
     //影像持續接收判斷
     not_good_p=(env.picture_m==b_picture_m)?not_good_p+1:0;
     b_picture_m=env.picture_m;
-    if(not_good_p>10){
-        v_fast=0;
+    //std::cout<<"not_good_p  "<<not_good_p<<std::endl;
+    if(not_good_p>20){
+        //v_fast=0;
         //預設為模擬模式 無接收blackitem 連接網頁後會關閉模擬模式才能正常啟動
         printf("\n\n[WORNING] 未接收blackitem資料 / 攝影機連線中斷 / 未連接網頁介面\n\n\n");
     }
@@ -376,9 +379,6 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     //     }
     // }
     //==============
-    if(THIS.type==INNER){
-        std::cout<<"THIS.move_left  "<<THIS.move_left<<"  THIS.move_right  "<<THIS.move_right<<std::endl;
-    }
     //角度規劃 避免碰撞
     int robot_radius = 20;
     double left_angle_tmp=0;
@@ -536,7 +536,6 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     dd_1 = inner.move_left;
     dd_2 = inner.move_right;
-    std::cout<<"THIS.dd1  "<<inner.move_left<<"  THIS.dd2  "<<inner.move_right<<std::endl;
     dd_1_dis=inner.move_left_dis;
     dd_2_dis=inner.move_right_dis;
     good_angle = (int)(inner.max_vacancy_number==0)?90:(dd_1+dd_2)/2;
@@ -635,9 +634,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     else dd_1_dis=env.blackdis[dd_1];
     if(dd_2<119)dd_2_dis=env.blackdis[dd_2+1];
     else dd_2_dis=env.blackdis[dd_2];
-    dd_1_dis = inner.move_left_dis;
-    dd_2_dis = inner.move_right_dis;
-
+    //dd_1_dis = inner.move_left_dis;
+    //dd_2_dis = inner.move_right_dis;
+    inner.move_left=dd_1;
+    inner.move_right=dd_2;
     int x1,x2,y1,y2;
     x1 = dd_1_dis*cos(dd_1*3*DEG2RAD);
     y1 = dd_1_dis*sin(dd_1*3*DEG2RAD);
@@ -650,8 +650,6 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //good_angle=(int)(hole_size<40)?90:inner.move_main;
     good_angle=(int)(hole_size<50)?30:inner.move_main;
     //>>>>>>>>>>>>>>>>>>>>>END   Inner dynamic window>>>>>>>>>>>>>>>>>>>>>
-    std::cout<<"dd1.dd1  "<<dd_1<<"  dd2.dd2  "<<dd_2<<std::endl;
-
     ////////////////////////////////////////////////////////////test for strategy
     
     int left_dis_sum = 0;
@@ -897,6 +895,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
     b_not_good_p=not_good_p;
     // v_fast=1;
+    if(not_good_p>20)v_fast = 0;
     v_fast=(avoid_go==0)?0:v_fast;
     FB_XX=(avoid_go==0)?0:FB_XX;
     motor_place(v_fast,final_angle,r_number);

@@ -12,8 +12,8 @@ function RosParamSP() {
 
     box.push(parseFloat(obj[0].value)); //VTdis_max
     box.push(parseFloat(obj[1].value)); //VTdis_min
-    box.push(3); //Tangle_max
-    box.push(3); //Tangle_min
+    box.push(1); //Tangle_max
+    box.push(0.5); //Tangle_min
     box.push(144); //Angle_max
     box.push(5); //Angle_min
 
@@ -122,6 +122,10 @@ function onloadAvoidGO() {
     setTimeout(ParamAvoidGo, 300, 0);
     setTimeout(ParamAvoidGo, 400, 0);
     setTimeout(ParamAvoidGo, 500, 0);
+    $('#StartInput').prop('checked',false);
+    $('#StartInput').change();
+    $('#StopInput').prop('checked',true);
+    $('#StopInput').change();
 }
 
 function ParamAvoidGo(state) {
@@ -141,4 +145,9 @@ function ParamAvoidGo(state) {
             AvoidGo.set(state);
         }
     }
+}
+function strategy_connection(){
+    onloadAvoidGO();
+    SimulatorFalse();
+    StrategyStop();
 }

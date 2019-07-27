@@ -52,7 +52,7 @@ function RosParamDistant() {
 ParamDistantBox.get(function(value) {
     if (value != null) {
         obj = document.getElementsByName("ParameterElement");
-        for (var i = 2; i < 4; i++) {
+        for (var i = 2; i < 5; i++) {
             obj[i].value = value[i - 2];
         }
     }

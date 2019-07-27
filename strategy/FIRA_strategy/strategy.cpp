@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     mNodeHandle.setOpponent(isOpponent);
     mNodeHandle.on_init();
 
-    ros::Rate loop_rate(25);
+    ros::Rate loop_rate(35);
 
     //bool isOpponent  = false;
     //FIRA_teamStrategy_class mteam;

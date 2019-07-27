@@ -13,7 +13,7 @@
 #define Strategy_nodeHandle_HPP_
 
 
-#define GAZEBO_SIMULATOR
+//#define GAZEBO_SIMULATOR
 
 /*****************************************************************************
 ** Includes
@@ -31,13 +31,16 @@
 #include "fira_status_plugin/RobotSpeedMsg.h"
 #include "fira_status_plugin/ModelMsg.h"
 #include "geometry_msgs/Twist.h"
-#include "nubot_common/VelCmd.h"
 #include "nav_msgs/Odometry.h"
 #include "gazebo_msgs/ModelStates.h"
 #include "std_msgs/Int32MultiArray.h"
 #include "vision/visionlook.h"
 
 #include "imu_3d/inertia.h"
+
+#ifdef GAZEBO_SIMULATOR
+#include "nubot_common/VelCmd.h"
+#endif
 /*****************************************************************************
 ** Define
 *****************************************************************************/
@@ -204,8 +207,9 @@ private:
     void rotateXY(double rotate,double inX,double inY,double &newX,double &newY);
     void pubSpeed(ros::Publisher *puber,double v_x,double v_y,double v_yaw,double robot_rot);
     void velocity_S_planning(geometry_msgs::Twist *msg);
+    #ifdef GAZEBO_SIMULATOR
     void velocity_S_planning(nubot_common::VelCmd *msg);
-
+    #endif
     //find Gazebo_msgs::ModelStates name
     void find_gazebo_model_name_fun(const gazebo_msgs::ModelStates::ConstPtr &msg){//----------------------------------printf here is ok, but printf next row will crash if i open over one robot map
 //        printf("testttttttttttttt\n");

@@ -256,7 +256,7 @@ void Strategy_nodeHandle::velocity_S_planning(geometry_msgs::Twist *msg){
         msg->angular.z = Tangle;
 //    std::cout<<"yaw = "<<msg->angular.z <<"\tmsg->linear.x ="<<msg->linear.x <<"\tmsg->linear.y ="<<msg->linear.y<< "\tangle="<<alpha<<std::endl;
 }
-
+#ifdef GAZEBO_SIMULATOR
 void Strategy_nodeHandle::velocity_S_planning(nubot_common::VelCmd *msg){
     double Vdis = hypot(msg->Vx,msg->Vy);
     double alpha = atan(-msg->Vx/msg->Vy)*rad2deg;
@@ -311,7 +311,7 @@ void Strategy_nodeHandle::velocity_S_planning(nubot_common::VelCmd *msg){
     }
         msg->w = Tangle;
 }
-
+#endif
 void Strategy_nodeHandle::pubGrpSpeed(){
 //    if(issimulator==true){
 //        ////--------------------speed test----------------

@@ -13,7 +13,7 @@
 #define Strategy_nodeHandle_HPP_
 
 
-//#define GAZEBO_SIMULATOR
+#define GAZEBO_SIMULATOR
 
 /*****************************************************************************
 ** Includes

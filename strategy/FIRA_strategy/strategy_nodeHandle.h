@@ -13,7 +13,7 @@
 #define Strategy_nodeHandle_HPP_
 
 
-//#define GAZEBO_SIMULATOR
+#define GAZEBO_SIMULATOR
 
 /*****************************************************************************
 ** Includes
@@ -76,7 +76,8 @@
 class Strategy_nodeHandle :public BaseNode {
 public:
     Strategy_nodeHandle(int argc, char** argv);
-
+    bool web_connected;
+    bool gazebo;
     virtual ~Strategy_nodeHandle(){}
 
     void pubGrpSpeed();
@@ -580,6 +581,7 @@ private:
     void subIsSimulator(const std_msgs::Int32::ConstPtr &msg){
         issimulator=msg->data;
         if(issimulator==1){
+            global_env->issimulator = 1;
             //Use_topic_gazebo_msgs_Model_States to get model position
 /*
             ball_sub = n->subscribe<gazebo_msgs::ModelStates>(ModelState_Topic_Name,1000,&Strategy_nodeHandle::ball_sub_fun,this);
@@ -594,6 +596,8 @@ private:
 */
         }
         else{
+            web_connected = true;
+            global_env->issimulator = 0;
             //contact image
             Vision = n->subscribe<vision::Object>(Vision_Topic,1000,&Strategy_nodeHandle::subVision,this);
             BlackObject = n->subscribe<std_msgs::Int32MultiArray>(BlackObject_Topic,1000,&Strategy_nodeHandle::subBlackObject,this);

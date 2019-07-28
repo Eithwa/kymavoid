@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     //=========Environment init=============//
     Environment *global_env = new Environment;
 
-
+    global_env->issimulator = 1;
     global_env->blue.pos.x = 3.35;
     global_env->blue.pos.y = 0;
     global_env->blue.pos.z = 0;
@@ -154,6 +154,8 @@ int main(int argc, char **argv)
         global_env->issimulator=mNodeHandle.getIsSimulator();
         shoot_value = mpathplan.getShoot();
         //ROS_INFO("shoot_value=%d",shoot_value);
+        mpathplan.web_connected = mNodeHandle.web_connected;
+        mpathplan.gazebo = mNodeHandle.gazebo;
         if(shoot_value>0){
            mNodeHandle.pubShoot(shoot_value);
            mpathplan.shoot_init();

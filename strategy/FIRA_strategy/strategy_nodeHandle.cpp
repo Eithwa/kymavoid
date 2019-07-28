@@ -12,7 +12,8 @@ Strategy_nodeHandle(int argc, char** argv):
 
 void Strategy_nodeHandle::ros_comms_init(){
     n = new ros::NodeHandle();
-
+    web_connected = false;
+    issimulator = 0;
     /*
     global_env->blue.pos.x = 3.35;
     global_env->blue.pos.y = 0;
@@ -76,8 +77,10 @@ void Strategy_nodeHandle::ros_comms_init(){
     std::string robotSpeed= Robot_Topic_Speed;
     #ifndef GAZEBO_SIMULATOR
         robot_speed_pub = n->advertise<geometry_msgs::Twist>(Robot_Topic_Speed,1000);
+        gazebo = false;
     #else
         robot_speed_pub = n->advertise<nubot_common::VelCmd>("nubot1/nubotcontrol/velcmd",1000);
+        gazebo = true;
     #endif
 
     //std::cout << "PersonalStrategy ros_comms_init() finish" << std::endl;
@@ -309,7 +312,7 @@ void Strategy_nodeHandle::velocity_S_planning(nubot_common::VelCmd *msg){
         // msg->Vx = VTdis*cos(alpha*deg2rad);
         // msg->Vy = VTdis*sin(alpha*deg2rad);
     }
-        msg->w = Tangle;
+    msg->w = Tangle;
 }
 #endif
 void Strategy_nodeHandle::pubGrpSpeed(){

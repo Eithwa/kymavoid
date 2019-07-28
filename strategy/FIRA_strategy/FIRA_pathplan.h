@@ -139,6 +139,8 @@ public:
     double goalkeeper_side_speed;
     
     //=======avoid=========
+    bool web_connected;
+    bool gazebo;
     int v_fast;
     int v_af;
     double good_angle;

@@ -196,12 +196,21 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int vacancy[30][2]={0};//最多儲存30個空間
     int vacancy_number=0;
     int vacancy_size=99;
-
+    int outer_find_range = far_dis;
+    int closest_obstacle_distance = 999;
+    for(int i=0; i<119; i++){
+        if(env.blackdis[i]<closest_obstacle_distance){
+            closest_obstacle_distance = env.blackdis[i];
+        }
+    }
+    if(closest_obstacle_distance > outer_find_range){
+        outer_find_range = closest_obstacle_distance + 20;
+    }
     for(int i= THIS.scan_left ; i<=THIS.scan_right ; i++){
     //for(int i= 0; i<=118 ; i++){
         //若黑線小於far dis(250) 且黑線大於中層的距離 或者紅線小於最遠距離 b_ok = false
         if(THIS.type == OUTER){
-            is_vacancy=((env.blackdis[i] <= far_dis)/*&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis)*/)?false:true;
+            is_vacancy=((env.blackdis[i] <= outer_find_range)/*&&(env.blackdis[i] >= halfclose_dis)||(env.reddis[i]<=far_dis)*/)?false:true;
         }else if(THIS.type == INNER){
             is_vacancy=((env.blackdis[i] <= halfclose_dis)/* ||(env.reddis[i]<=250)*/)?false:true;
             //is_vacancy=((env.blackdis[i] <= 80))?false:true;
@@ -356,12 +365,12 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int obstacle_distance_error = 0;
     //計算空洞左右邊界與機器人距離
 
-    int search_rangle = 2;
+    int search_rangle = 10;
     int min_distance = 999;
     int min_distance_angle=THIS.move_left;
     for(int i=THIS.move_left-search_rangle ; i<(THIS.move_left+search_rangle); i++){
         if(i<119 && i>0){
-            if(env.blackdis[i]<min_distance){
+            if(env.blackdis[i]<(min_distance-10)){
                 min_distance = env.blackdis[i];
                 min_distance_angle = i;
             }
@@ -374,7 +383,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     min_distance_angle =  THIS.move_right;
     for(int i=THIS.move_right-search_rangle ; i<(THIS.move_right+search_rangle); i++){
         if(i<119 && i>0){
-            if(env.blackdis[i]<min_distance){
+            if(env.blackdis[i]<(min_distance-10)){
                 min_distance = env.blackdis[i];
                 min_distance_angle = i;
             }
@@ -474,6 +483,34 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     //     }
     // }
     THIS.move_main = (right_angle+left_angle)/2;
+    int search_min = (left_angle-25)>0?left_angle-25:0;
+    int search_max = (right_angle+25)<118?right_angle+25:118;
+    int search_distace = (THIS.move_right_dis<THIS.move_left_dis)?THIS.move_right_dis:THIS.move_left_dis;
+    int closest_distance = 999;
+    int closest_angle = 0;
+    double center_distance;
+
+    if(THIS.type == INNER){
+        for(int i=search_min; i<search_max; i++){
+            center_distance = env.blackdis[i]*sin(fabs((i-THIS.move_main)*3)*DEG2RAD);
+            if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<18){
+                if(env.blackdis[i]<closest_distance){
+                    closest_distance = env.blackdis[i];
+                    closest_angle = i;
+                }
+                //std::cout<<"會碰撞！！！！！！！！！！！！\n";
+            }
+        }
+    }
+    //std::cout<<"closest_angle    "<<closest_angle<<std::endl;
+    if(closest_angle>0 && closest_angle<119 ){
+        if(closest_angle>THIS.move_main){
+            THIS.move_main = THIS.move_main-fabs(closest_angle-THIS.move_main);
+        }
+        else if(closest_angle<THIS.move_main){
+            THIS.move_main = THIS.move_main+fabs(closest_angle-THIS.move_main);
+        }
+    }
     //THIS.move_main = THIS.move_left;
     //THIS.move_main = left_angle;
     //THIS.move_main = right_angle;
@@ -545,8 +582,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //std::cout<<"遠洞口寬度 "<<hole_size<<"cm"<<std::endl;
 
     if(outer.max_vacancy_number==0||hole_size<50){
-        outer.scan_left=(main_vec-30-15<(30-15))?(30-15):main_vec-30-15;
-        outer.scan_right=(main_vec+30+15>(90+15))?(90+15):main_vec+30+15;
+        outer.scan_left=(main_vec-30-10<(30-10))?(30-10):main_vec-30-10;
+        outer.scan_right=(main_vec+30+10>(90+10))?(90+10):main_vec+30+10;
         RoutePlan(outer);
     }
 
@@ -555,7 +592,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     df_2 = outer.move_right;
     df_1_dis=outer.move_left_dis;
     df_2_dis=outer.move_right_dis;
-    far_good_angle =(outer.max_vacancy_number==0)?90:outer.move_main;
+    far_good_angle =(outer.max_vacancy_number==0)?60:outer.move_main;
     x1 = df_1_dis*cos(df_1*3*DEG2RAD);
     y1 = df_1_dis*sin(df_1*3*DEG2RAD);
     x2 = df_2_dis*cos(df_2*3*DEG2RAD);
@@ -585,7 +622,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
 
 
 
-    if(far_good_angle>(30-10) && far_good_angle<(90+10)){
+    if(far_good_angle>(30-10) && far_good_angle<(90+10) && outer.max_vacancy_number>0){
         main_vec = far_good_angle;
     }
     int find_range = 25;
@@ -896,17 +933,17 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         break;
     case box_in_between:
 
-        // if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
-        //     //final_angle = 90-(90-(right_dis_average-left_dis_average))/3;//turn right
-        //     final_angle = good_angle+3;
-        // }else if(left_dis_average > right_dis_average){
-        //     //final_angle = 90-(90+(left_dis_average-right_dis_average))/3;//turn left
-        //     final_angle = good_angle-3;
-        // }else{
-        //     //final_angle = 60;//go forward
-        //     final_angle = good_angle;
-        // }
-        final_angle = Artificial_field(inner, outer, main_vec, close_dis, RedLine, red_dis_average, dangerous_dis, red_line_dangerous_dis, condition);
+        if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
+            //final_angle = 90-(90-(right_dis_average-left_dis_average))/3;//turn right
+            final_angle = good_angle+3;
+        }else if(left_dis_average > right_dis_average){
+            //final_angle = 90-(90+(left_dis_average-right_dis_average))/3;//turn left
+            final_angle = good_angle-3;
+        }else{
+            //final_angle = 60;//go forward
+            final_angle = good_angle;
+        }
+        //final_angle = Artificial_field(inner, outer, main_vec, close_dis, RedLine, red_dis_average, dangerous_dis, red_line_dangerous_dis, condition);
         printf("middle box========  ");
         break;
     // case red_line:
@@ -990,25 +1027,25 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                 v_fast = 1;
             }
             //v_fast=(v_fast>1)?v_fast:1;
-            int angle_min = (good_angle-25>0)?good_angle-25:0;
-            int angle_max = (good_angle+25>118)?good_angle+25:118;
+            int angle_min = (final_angle-5>0)?final_angle-5:0;
+            int angle_max = (final_angle+5<118)?final_angle+5:118;
             for(int i=angle_min; i<angle_max; i++){
-                if(env.blackdis[i]<slowdown_distance)v_fast=v_fast-5;
+                if(env.blackdis[i]<80)v_fast=v_fast-5;
                 if(v_fast<1)v_fast=1;
-                if(env.blackdis[i]<close_dis&&condition!=box_in_between){
-                    v_fast=1;
-                }
+                // if(env.blackdis[i]<close_dis&&condition!=box_in_between){
+                //     v_fast=1;
+                // }
 
                 //if(abs(good_angle-i)<20&&env.blackdis[i]<80){
                 //    v_fast=1;
                 //}
             }
             if(condition==box_in_between){
-                angle_min = final_angle-3;
-                angle_max = final_angle+3;
+                angle_min = (final_angle-2>0)?final_angle-2:0;
+                angle_max = (final_angle+2<118)?final_angle+2:118;
                 bool speed_up_flag = true;
                 for(int i=angle_min; i<angle_max; i++){
-                    if(env.blackdis[i]<slowdown_distance){
+                    if(env.blackdis[i]<80){
                         if(v_fast>1){
                             v_fast=v_fast-3;
                             if(v_fast<1)v_fast=1;
@@ -1020,12 +1057,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                     }
                 }
                 if(speed_up_flag==true){
-                    v_fast=v_fast+5;v_fast=(v_fast<80)?v_fast:60;
+                    v_fast=80;
+                    //v_fast=(v_fast+5<80)?v_fast+5:80;
                 }
-                //v_fast=80;
-
             }
-
         }
     //}
     //===============================

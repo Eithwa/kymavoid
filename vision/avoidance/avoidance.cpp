@@ -88,7 +88,61 @@ cv::Mat Vision::draw_interface()
     int af_line = 50;
     int x;
     int y;
+    int x1,y1,x2,y2;
+    int final_rl = 100;
+    //===============far_good_angle
+    draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),2);
+    angle = 360-(far_good_angle*3)-90;
+    x = center_x+(close_line-20)*cos(angle*DEG2RAD);
+    y = center_y-(close_line-20)*sin(angle*DEG2RAD);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0),4);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(18,116,54),3);
+
+    //x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
+    //y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
+    //x2 = x1+final_rl*cos(angle*DEG2RAD);
+    //y2 = y1-final_rl*sin(angle*DEG2RAD);
+    //line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
+    //x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
+    //y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
+    //line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
+
+    //x1 = center_x+robot_radius*cos((angle-90)*DEG2RAD);
+    //y1 = center_y-robot_radius*sin((angle-90)*DEG2RAD);
+    //x2 = x1+final_rl*cos(angle*DEG2RAD);
+    //y2 = y1-final_rl*sin(angle*DEG2RAD);
+    //line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
+    //x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
+    //y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
+    //line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
+    //==================
+    //===============good_angle
+    draw_ellipse(visual_map,(360-(good_angle*3)-90),(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),2);
+    angle = 360-(good_angle*3)-90;
+    x = center_x+(close_line-20)*cos(angle*DEG2RAD);
+    y = center_y-(close_line-20)*sin(angle*DEG2RAD);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(0,0,0),4);
+    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(250,0,0),3);
+
+    x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
+    y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
+    x2 = x1+final_rl*cos(angle*DEG2RAD);
+    y2 = y1-final_rl*sin(angle*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
+    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
+    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
+
+    x1 = center_x+robot_radius*cos((angle-90)*DEG2RAD);
+    y1 = center_y-robot_radius*sin((angle-90)*DEG2RAD);
+    x2 = x1+final_rl*cos(angle*DEG2RAD);
+    y2 = y1-final_rl*sin(angle*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
+    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
+    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
+    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
     //===============
+    //===============final_angle
     //cout<<"final_angle"<<final_angle<<endl;
     angle = int(360-(final_angle*3))-90;
     x = center_x+final_line*cos(angle*DEG2RAD);
@@ -100,8 +154,7 @@ cv::Mat Vision::draw_interface()
     x = center_x+v_fast*2*cos(angle*DEG2RAD);
     y = center_y-v_fast*2*sin(angle*DEG2RAD);
     line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(255,200,0), 5);
-    int x1,y1,x2,y2;
-    int final_rl = 100;
+    
     x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
     y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
     x2 = x1+final_rl*cos(angle*DEG2RAD);
@@ -119,53 +172,7 @@ cv::Mat Vision::draw_interface()
     x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
     y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
     line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(255,200,0), 1);
-    //==================
-    //===============
-    draw_ellipse(visual_map,(360-(far_good_angle*3)-90),(360-(df_2*3)-90),(360-(df_1)*3-90),df_2_dis,df_1_dis,Scalar(18,116,54),2);
-    angle = 360-(far_good_angle*3)-90;
-    x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
-    y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
-    x2 = x1+final_rl*cos(angle*DEG2RAD);
-    y2 = y1-final_rl*sin(angle*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
-    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
-    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
-
-    x1 = center_x+robot_radius*cos((angle-90)*DEG2RAD);
-    y1 = center_y-robot_radius*sin((angle-90)*DEG2RAD);
-    x2 = x1+final_rl*cos(angle*DEG2RAD);
-    y2 = y1-final_rl*sin(angle*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
-    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
-    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(18,116,54), 1);
-    //==================
-    //===============
-    draw_ellipse(visual_map,(360-(good_angle*3)-90),(360-(dd_2*3)-90),(360-(dd_1*3)-90),dd_2_dis,dd_1_dis,Scalar(250,0,0),2);
-    angle = 360-(good_angle*3)-90;
-    x = center_x+(close_line-20)*cos(angle*DEG2RAD);
-    y = center_y-(close_line-20)*sin(angle*DEG2RAD);
-    line(visual_map, Point(center_x, center_y), Point(x, y), Scalar(250,0,0),2);
-
-    x1 = center_x+robot_radius*cos((angle+90)*DEG2RAD);
-    y1 = center_y-robot_radius*sin((angle+90)*DEG2RAD);
-    x2 = x1+final_rl*cos(angle*DEG2RAD);
-    y2 = y1-final_rl*sin(angle*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
-    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
-    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
-
-    x1 = center_x+robot_radius*cos((angle-90)*DEG2RAD);
-    y1 = center_y-robot_radius*sin((angle-90)*DEG2RAD);
-    x2 = x1+final_rl*cos(angle*DEG2RAD);
-    y2 = y1-final_rl*sin(angle*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
-    x2 = x1+robot_radius*cos((angle+180)*DEG2RAD);
-    y2 = y1-robot_radius*sin((angle+180)*DEG2RAD);
-    line(visual_map, Point(x1, y1), Point(x2, y2), Scalar(250,0,0), 1);
-    //===============
+    //==================af_angle
     //cout<<"af_angle"<<af_angle<<endl;
     angle = int(360-(af_angle*3))-90;
     x = center_x+v_af*cos(angle*DEG2RAD);

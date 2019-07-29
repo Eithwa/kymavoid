@@ -368,7 +368,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     int search_rangle = 10;
     int min_distance = 999;
     int min_distance_angle=THIS.move_left;
-    for(int i=THIS.move_left-search_rangle ; i<(THIS.move_left+search_rangle); i++){
+    for(int i=THIS.move_left ; i>(THIS.move_left-search_rangle); i--){
         if(i<119 && i>0){
             if(env.blackdis[i]<(min_distance-10)){
                 min_distance = env.blackdis[i];
@@ -381,7 +381,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     //==================
     min_distance = 999;
     min_distance_angle =  THIS.move_right;
-    for(int i=THIS.move_right-search_rangle ; i<(THIS.move_right+search_rangle); i++){
+    for(int i=THIS.move_right ; i<(THIS.move_right+search_rangle); i++){
         if(i<119 && i>0){
             if(env.blackdis[i]<(min_distance-10)){
                 min_distance = env.blackdis[i];
@@ -493,7 +493,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     if(THIS.type == INNER){
         for(int i=search_min; i<search_max; i++){
             center_distance = env.blackdis[i]*sin(fabs((i-THIS.move_main)*3)*DEG2RAD);
-            if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<18){
+            if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<20){
                 if(env.blackdis[i]<closest_distance){
                     closest_distance = env.blackdis[i];
                     closest_angle = i;
@@ -1064,7 +1064,12 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         }
     //}
     //===============================
-
+    if(good_angle<(30-20) || good_angle>(90+20)){
+        good_angle = 60;
+    }
+    if(far_good_angle<(30-20) || far_good_angle>(90+20)){
+        far_good_angle = 60;
+    }
     pre_condition = condition;
     b_not_good_p=not_good_p;
     // v_fast=1;

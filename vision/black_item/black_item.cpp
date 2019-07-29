@@ -201,7 +201,7 @@ Mat Vision::convertTo3Channels(const Mat &binImg)
 void Vision::black_filter()
 {
     int inner = InnerMsg, outer = OuterMsg, centerx = CenterXMsg, centery = CenterYMsg;
-    int detection_range = HorizonMsg;
+    int detection_range = 75;//HorizonMsg;
     int width = Black_Mask.cols-1, length = Black_Mask.rows-1;
     //obj_filter_size =500;
     int obj_size = obj_filter_size;

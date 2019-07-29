@@ -493,7 +493,7 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     if(THIS.type == INNER){
         for(int i=search_min; i<search_max; i++){
             center_distance = env.blackdis[i]*sin(fabs((i-THIS.move_main)*3)*DEG2RAD);
-            if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<20){
+            if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<22){
                 if(env.blackdis[i]<closest_distance){
                     closest_distance = env.blackdis[i];
                     closest_angle = i;
@@ -904,7 +904,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     }
     //===================================
     //=======引力斥力與中間相子case切換======
-    std::cout<<"left_closest_dis  "<<left_closest_dis<<"    right_closest_dis  "<<right_closest_dis<<std::endl;
+    //std::cout<<"left_closest_dis  "<<left_closest_dis<<"    right_closest_dis  "<<right_closest_dis<<std::endl;
     //if(left_dis_average<45&&right_dis_average<45&&abs(left_closest_dis-right_closest_dis)<6){
     if((left_closest_dis+right_closest_dis)<90){
     //if(left_dis_average<45&&right_dis_average<45){//兩個箱子中間的case
@@ -1027,8 +1027,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                 v_fast = 1;
             }
             //v_fast=(v_fast>1)?v_fast:1;
-            int angle_min = (final_angle-5>0)?final_angle-5:0;
-            int angle_max = (final_angle+5<118)?final_angle+5:118;
+            int angle_min = (final_angle-8>0)?final_angle-8:0;
+            int angle_max = (final_angle+8<118)?final_angle+8:118;
             for(int i=angle_min; i<angle_max; i++){
                 if(env.blackdis[i]<80)v_fast=v_fast-5;
                 if(v_fast<1)v_fast=1;
@@ -1171,7 +1171,7 @@ double FIRA_pathplan_class::Artificial_field(ScanInfo inner, ScanInfo outer, int
             }
         }
     }
-    std::cout<<"closest_angle  "<<closest_angle<<"  closest_dis  "<<closest_dis<<std::endl;
+    //std::cout<<"closest_angle  "<<closest_angle<<"  closest_dis  "<<closest_dis<<std::endl;
     dis_average = closest_dis;
     if(dis_average<=dangerous_dis){//dangerous_dis = close_dis //60 speed (10) //54  speed (30,10)
         Obj_angle = closest_angle;

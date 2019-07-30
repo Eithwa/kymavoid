@@ -2,6 +2,7 @@
 
 NodeHandle::NodeHandle()
 {
+    device_number = 0;
     Readyaml();
     AngleLUT();
 
@@ -87,21 +88,25 @@ void NodeHandle::SaveButton_setting(const vision::bin msg)
     Parameter_getting();
 }
 void NodeHandle::scancall(const sensor_msgs::LaserScan msg){
+    if(device_number<1)device_number=1;
     ranges.clear();
     ranges.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;
 }
 void NodeHandle::scancall2(const sensor_msgs::LaserScan msg){
+    if(device_number<2)device_number=2;
     ranges2.clear();
     ranges2.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;
 }
 void NodeHandle::scancall3(const sensor_msgs::LaserScan msg){
+    if(device_number<3)device_number=3;
     ranges3.clear();
     ranges3.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;
 }
 void NodeHandle::scancall4(const sensor_msgs::LaserScan msg){
+    if(device_number<4)device_number=4;
     ranges4.clear();
     ranges4.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;

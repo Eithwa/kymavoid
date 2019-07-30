@@ -11,7 +11,7 @@ Vision::Vision(string topic)
     obj_filter_size=500;
     HorizonMsg=150;
     setgray=10;
-    Parameter_getting();
+    //Parameter_getting();
     image_sub = nh.subscribe(topic, 1, &Vision::imageCb, this);
     FrameRate = 0.0;
 }

@@ -2,7 +2,7 @@
 #define DEG2RAD  M_PI/180
 Vision::Vision()
 {
-    Parameter_getting();
+    //Parameter_getting();
     image_sub = nh.subscribe("/camera/image_raw", 1, &Vision::imageCb, this);
     FrameRate = 0.0;
 }
@@ -79,7 +79,10 @@ void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<do
     tf.y = -sensor_distance*sin((sensor_angle+90)*DEG2RAD);
     circle(visual_map, Point(center_x+tf.x, center_y+tf.y), 4, Scalar(255,0,0), -1);
     if(ranges.size()>0){
-        double black_angle = (double)270/ranges.size();
+        //if(device_number<2){
+        //    double black_angle = (double)270/ranges.size();
+        //}
+        double black_angle = (double)180/ranges.size();
         for(int i=0; i<ranges.size(); i++){
             double angle = black_angle*i+sensor_angle-45;
             double distance = ranges.at(i)*100;
@@ -166,10 +169,10 @@ cv::Mat Vision::draw_interface()
         double x_ = Angle_cos[angle_be];
         double y_ = Angle_sin[angle_be];
         //cout<<angle<<endl;
-        if(angle>90&&angle<270){
-            blackItem.data.push_back(999);
-            continue;
-        }
+        //if(angle>90&&angle<270){
+        //    blackItem.data.push_back(999);
+        //    continue;
+        //}
         for (int r = center_inner; r <= center_outer; r++)
         {
             int dis_x = x_ * r;

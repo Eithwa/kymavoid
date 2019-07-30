@@ -185,6 +185,7 @@ cv::Mat Vision::draw_interface()
     line(visual_map, Point(center_x, center_y), Point(center_x, center_y-robot_radius), Scalar(0,0,0), 2);
     //===========================
     //====draw the black item====
+    
     if(black_item_distance.size()>0){
         int black_angle = 360/black_item_distance.size();
         for(int i=0; i<black_item_distance.size(); i++){
@@ -197,6 +198,7 @@ cv::Mat Vision::draw_interface()
     }
     //===========================
     //====draw the red line======
+    
     if(red_line_distance.size()>0){
         int red_angle = 360/red_line_distance.size();
         for(int i=0; i<red_line_distance.size(); i++){
@@ -208,8 +210,8 @@ cv::Mat Vision::draw_interface()
         }
     }
     //===========================
-    //imshow("visual_map", visual_map);
-    //waitKey(10);
+    imshow("visual_map", visual_map);
+    waitKey(10);
     Pub_avoidframe(visual_map);
     return visual_map;
 }

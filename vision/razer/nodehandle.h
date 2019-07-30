@@ -77,6 +77,7 @@ class NodeHandle
     vector<double> ranges2;
     vector<double> ranges3;
     vector<double> ranges4;
+    int device_number;
 
     ros::Publisher mpicture;
     vision::visionlook to_strategy;

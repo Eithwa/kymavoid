@@ -21,6 +21,7 @@
 #include "vision/black.h"
 #include "vision/bin.h"
 #include "vision/color.h"
+#include "vision/visionlook.h"
 #include "vision/avoid.h"
 #define PI 3.14159265
 #define FRAME_COLS 659 //width  x659
@@ -45,10 +46,15 @@ class NodeHandle
     vector<double> Angle_cos;
     int Frame_Area(int coordinate, int range);
     int Angle_Adjustment(int angle);
-    void Pub_avoidframe(Mat frame);
+    void Pub_blackframe(Mat frame);
     void Pub_blackdis(std_msgs::Int32MultiArray distance);
-    ros::Publisher avoidframe_pub;
+    void Pub_redframe(Mat frame);
+    void Pub_reddis(std_msgs::Int32MultiArray distance);
+
+    ros::Publisher blackframe_pub;
     ros::Publisher blackdis_pub;
+    ros::Publisher redframe_pub;
+    ros::Publisher red_pub;
     vector <double> black_item_distance;
     vector <double> red_line_distance;
     //================center====================
@@ -64,40 +70,26 @@ class NodeHandle
     double Omni_distance(double pixel_dis);
     //========================================
     vector<int> HSV_green;
+    vector<int> HSV_red;
     //========================================
-    double df_1;
-    double df_2;
-    double df_1_dis;
-    double df_2_dis;
-    double far_good_angle;
-    double dd_1;
-    double dd_2;
-    double dd_1_dis;
-    double dd_2_dis;
-    double good_angle;
-    double final_angle;
-    double af_angle;
-    double v_fast;
-    double v_af;
     //============laser scan=================
     vector<double> ranges;
     vector<double> ranges2;
     vector<double> ranges3;
     vector<double> ranges4;
 
+    ros::Publisher mpicture;
+    vision::visionlook to_strategy;
+
   private:
     ros::NodeHandle nh;
     ros::Subscriber save_sub;
-    ros::Subscriber blackdis_sub;
-    ros::Subscriber reddis_sub;
-    ros::Subscriber avoid_sub;
+
     ros::Subscriber scan_sub;
     ros::Subscriber scan_sub2;
     ros::Subscriber scan_sub3;
     ros::Subscriber scan_sub4;
-    void blackdiscall(const std_msgs::Int32MultiArray msg);
-    void reddiscall(const std_msgs::Int32MultiArray msg);
-    void avoidcall(const vision::avoid msg);
+
     void SaveButton_setting(const vision::bin msg);
     void scancall(const sensor_msgs::LaserScan msg);
     void scancall2(const sensor_msgs::LaserScan msg);

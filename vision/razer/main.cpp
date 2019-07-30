@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "razer");
     ros::NodeHandle h_node;
     signal(SIGINT, SigintHandler);
-    ros::Rate loop_rate(30); //program speed limit
+    ros::Rate loop_rate(40); //program speed limit
     Vision interface;
     fflush(stdout); //更新文字緩衝區
     while (ros::ok())

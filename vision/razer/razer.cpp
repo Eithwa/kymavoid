@@ -2,13 +2,9 @@
 #define DEG2RAD  M_PI/180
 Vision::Vision()
 {
-    df_1=0;
-    df_2=0;
-    far_good_angle=0;
-    dd_1=0;
-    dd_2=0;
-    good_angle=0;
-    final_angle=0;
+    Parameter_getting();
+    image_sub = nh.subscribe("/camera/image_raw", 1, &Vision::imageCb, this);
+    FrameRate = 0.0;
 }
 Vision::~Vision()
 {
@@ -40,6 +36,41 @@ double Vision::Rate()
     }
     return frame_rate;
 }
+void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
+{
+    cv_bridge::CvImagePtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8); //convert image data
+        if (!cv_ptr->image.empty())
+        {
+            Source = cv_ptr->image.clone();
+            cv::flip(Source, Source, 1); // reverse image
+            
+            Red_Mask = Source.clone();
+
+            //================Red line detection==============
+            red_binarization();
+            red_line();
+            Pub_redframe(Red_Mask);
+            //cv::imshow("black_item", Black_Mask);
+            //cv::imshow("red_line", Red_Mask);
+            //cv::waitKey(1);
+            //=======================FPS======================
+            FrameRate = Rate();
+            //================================================
+            to_strategy.mpicture++;
+            to_strategy.gray_ave = 10;
+            mpicture.publish(to_strategy);
+        }
+    }
+    catch (cv_bridge::Exception &e)
+    {
+        ROS_ERROR("Could not convert to image!");
+        return;
+    }
+}
+
 void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<double> ranges, Scalar color){
     int center_x = visual_map.cols/2;
     int center_y = visual_map.rows/2;
@@ -113,7 +144,11 @@ cv::Mat Vision::draw_interface()
     //============
     int sensor3_angle = 180;
     int sensor3_distance = 15;
-    draw_scan(visual_map, sensor3_angle, sensor3_distance, ranges3, Scalar(255,0,0));
+    draw_scan(visual_map, sensor3_angle, sensor3_distance, ranges3, Scalar(0,0,0));
+    //============
+    int sensor4_angle = 270;
+    int sensor4_distance = 15;
+    draw_scan(visual_map, sensor3_angle, sensor4_distance, ranges4, Scalar(0,0,0));
     //===========================
     int center_front = 90;
     int black_angle = 3;
@@ -162,9 +197,20 @@ cv::Mat Vision::draw_interface()
             }
         }
     }
+    //===============
+    //add red line
+    if(blackItem.data.size()==red_line_distance.size()){
+        for(int i=0; i<blackItem.data.size(); i++){
+            if(red_line_distance.at(i)<blackItem.data.at(i)){
+                blackItem.data.at(i) = red_line_distance.at(i);
+            }        
+        }    
+    }
+    //===============
     imshow("visual_map", visual_map);
     waitKey(10);
     Pub_blackdis(blackItem);
+    Pub_blackframe(visual_map);
     //Pub_avoidframe(visual_map);
     return visual_map;
 }
@@ -181,3 +227,115 @@ Mat Vision::convertTo3Channels(const Mat &binImg)
     return three_channel;
 }
 
+
+//================================================
+void Vision::red_binarization()
+{
+    Mat inputMat = Red_Mask.clone();
+    Mat hsv(inputMat.rows, inputMat.cols, CV_8UC3, Scalar(0, 0, 0));
+    Mat mask(inputMat.rows, inputMat.cols, CV_8UC1, Scalar(0, 0, 0));
+    Mat mask2(inputMat.rows, inputMat.cols, CV_8UC1, Scalar(0, 0, 0));
+    Mat dst(inputMat.rows, inputMat.cols, CV_8UC3, Scalar(0, 0, 0));
+    Mat white(inputMat.rows, inputMat.cols, CV_8UC3, Scalar(255, 255, 255));
+    int hmin, hmax, smin, smax, vmin, vmax;
+    cvtColor(inputMat, hsv, CV_BGR2HSV);
+    hmin = HSV_red[0]/2;
+    hmax = HSV_red[1]/2;
+    smin = HSV_red[2]*2.56;
+    smax = HSV_red[3]*2.56;
+    vmin = HSV_red[4]*2.56;
+    vmax = HSV_red[5]*2.56;
+    //for(int i =0; i<HSV_red.size(); i++)
+    //{
+    //    cout<<HSV_red[i]<<" ";
+    //}
+    //cout<<endl;
+    if (HSV_red[0] <= HSV_red[1])
+    {
+        inRange(hsv, Scalar(hmin, smin, vmin), Scalar(hmax, smax, vmax), mask);
+    }
+    else
+    {
+        inRange(hsv, Scalar(hmin, smin, vmin), Scalar(255, smax, vmax), mask);
+        inRange(hsv, Scalar(0, smin, vmin), Scalar(hmax, smax, vmax), mask2);
+        mask = mask + mask2;
+    }
+    convertTo3Channels(mask);
+    //開操作 (去除噪點)
+    //Mat element = getStructuringElement(MORPH_RECT, Size(2, 2));
+    //morphologyEx(mask, mask, MORPH_OPEN, element);
+    
+    white.copyTo(dst, (cv::Mat::ones(mask.size(), mask.type()) * 255 - mask));
+    Red_Mask = dst;
+    ///////////////////Show view/////////////////
+    //cv::imshow("dst", dst);
+    //cv::imshow("Red_Mask", Red_Mask);
+    //cv::waitKey(1);
+    /////////////////////////////////////////////
+}
+void Vision::red_line()
+{
+    int object_dis;
+    std::vector<double>redItem_pixel;
+    std_msgs::Int32MultiArray redRealDis;
+    Mat binarization_map = Red_Mask.clone();
+    red_line_distance.clear();
+    //int black_angle = BlackAngleMsg;
+    int black_angle = 3;//避障策略只能三度一條掃描線
+    int center_front = FrontMsg;
+    int center_inner = InnerMsg;
+    int center_outer = OuterMsg;
+    int center_x = CenterXMsg;
+    int center_y = CenterYMsg;
+
+    for (int angle = 0; angle < 360; angle = angle + black_angle)
+    {
+        int angle_be = angle + center_front;
+
+        if (angle_be >= 360)
+            angle_be -= 360;
+
+        double x_ = Angle_cos[angle_be];
+        double y_ = Angle_sin[angle_be];
+        for (int r = center_inner; r <= center_outer; r++)
+        {
+            int dis_x = x_ * r;
+            int dis_y = y_ * r;
+
+            int image_x = Frame_Area(center_x + dis_x, binarization_map.cols);
+            int image_y = Frame_Area(center_y - dis_y, binarization_map.rows);
+
+            if (binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 0] == 0 
+             && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 1] == 0 
+             && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 2] == 0)
+            {
+                red_line_distance.push_back(hypot(dis_x, dis_y));
+                break;
+            }
+            else
+            {
+                Red_Mask.data[(image_y * Red_Mask.cols + image_x) * 3 + 0] = 0;
+                Red_Mask.data[(image_y * Red_Mask.cols + image_x) * 3 + 1] = 0;
+                Red_Mask.data[(image_y * Red_Mask.cols + image_x) * 3 + 2] = 255;
+            }
+            if (r >= center_outer)
+            {
+                red_line_distance.push_back(hypot(dis_x, dis_y));
+            }
+        }
+    }
+
+    for (int j = 0; j < redItem_pixel.size(); j++)
+    {
+        object_dis = Omni_distance(redItem_pixel[j]);
+        red_line_distance.push_back(object_dis);
+    }
+    //new_vector.assign(original.begin(), original.end());
+    redRealDis.data.assign(red_line_distance.begin(), red_line_distance.end());
+    red_pub.publish(redRealDis);
+
+    ///////////////////Show view/////////////////
+    //cv::imshow("red_line", Red_Mask);
+    //cv::waitKey(1);
+    /////////////////////////////////////////////
+}

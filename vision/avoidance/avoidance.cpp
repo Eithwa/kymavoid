@@ -210,8 +210,8 @@ cv::Mat Vision::draw_interface()
         }
     }
     //===========================
-    imshow("visual_map", visual_map);
-    waitKey(10);
+    //imshow("visual_map", visual_map);
+    //waitKey(10);
     Pub_avoidframe(visual_map);
     return visual_map;
 }

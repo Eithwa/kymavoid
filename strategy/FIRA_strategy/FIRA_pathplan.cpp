@@ -581,7 +581,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int hole_size = (int)(outer.max_vacancy_number==0)?0:hypot(x1-x2,y1-y2);
     //std::cout<<"遠洞口寬度 "<<hole_size<<"cm"<<std::endl;
 
-    if(outer.max_vacancy_number==0||hole_size<50){
+    if(outer.max_vacancy_number==0||hole_size<40){
         outer.scan_left=(main_vec-30-10<(30-10))?(30-10):main_vec-30-10;
         outer.scan_right=(main_vec+30+10>(90+10))?(90+10):main_vec+30+10;
         RoutePlan(outer);

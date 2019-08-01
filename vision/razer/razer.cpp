@@ -84,7 +84,7 @@ void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<do
         //}
         double black_angle = (double)180/ranges.size();
         for(int i=0; i<ranges.size(); i++){
-            double angle = black_angle*i+sensor_angle-45;
+            double angle = black_angle*i+sensor_angle;
             double distance = ranges.at(i)*100;
             double x = center_x+tf.x+distance*cos(angle*DEG2RAD);
             double y = center_y+tf.y-distance*sin(angle*DEG2RAD);
@@ -141,17 +141,17 @@ cv::Mat Vision::draw_interface()
     int sensor1_distance = 15;
     draw_scan(visual_map, sensor1_angle, sensor1_distance, ranges, Scalar(0,0,0));
     //============
-    int sensor2_angle = 60;
-    int sensor2_distance = 20;
+    int sensor2_angle = 243;
+    int sensor2_distance = 12;
     draw_scan(visual_map, sensor2_angle, sensor2_distance, ranges2, Scalar(0,0,0));
     //============
-    int sensor3_angle = 180;
+    int sensor3_angle = 120;
     int sensor3_distance = 15;
     draw_scan(visual_map, sensor3_angle, sensor3_distance, ranges3, Scalar(0,0,0));
     //============
-    int sensor4_angle = 270;
-    int sensor4_distance = 15;
-    draw_scan(visual_map, sensor3_angle, sensor4_distance, ranges4, Scalar(0,0,0));
+    //int sensor4_angle = 270;
+    //int sensor4_distance = 15;
+    //draw_scan(visual_map, sensor3_angle, sensor4_distance, ranges4, Scalar(0,0,0));
     //===========================
     int center_front = 90;
     int black_angle = 3;
@@ -323,7 +323,7 @@ void Vision::red_line()
             }
             if (r >= center_outer)
             {
-                red_line_distance.push_back(hypot(dis_x, dis_y));
+                red_line_distance.push_back(hypot(999, 999));
             }
         }
     }

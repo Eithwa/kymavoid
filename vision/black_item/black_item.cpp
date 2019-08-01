@@ -68,7 +68,7 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
             cv::flip(Source, Source, 1); // reverse image
             Black_Mask = Source.clone();
             Red_Mask = Source.clone();
-            #pragma omp parallel sections
+            #pragma omp parallel sections num_threads(3)
             {
                 #pragma omp section
                 {

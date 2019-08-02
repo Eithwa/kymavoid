@@ -3,6 +3,20 @@
 NodeHandle::NodeHandle()
 {
     device_number = 0;
+    robot_angle_1 = 0;
+    robot_distance_1 = 15;
+    scan_angle_1 = 0;
+    robot_angle_2 = 120;
+    robot_distance_2 = 15;
+    scan_angle_2 = 0;
+    robot_angle_3 = 240;
+    robot_distance_3 = 15;
+    scan_angle_3 = 0;
+
+    scan_enable.push_back(1);
+    scan_enable.push_back(1);
+    scan_enable.push_back(1);
+
     Readyaml();
     AngleLUT();
 
@@ -11,6 +25,8 @@ NodeHandle::NodeHandle()
     scan_sub2 = nh.subscribe("/hokuyo_2/scan", 1000, &NodeHandle::scancall2, this);
     scan_sub3 = nh.subscribe("/hokuyo_3/scan", 1000, &NodeHandle::scancall3, this);
     scan_sub4 = nh.subscribe("/hokuyo_4/scan", 1000, &NodeHandle::scancall4, this);
+    scan_enable_sub = nh.subscribe("/scan/scan_enable", 1000, &NodeHandle::scan_enable_call, this);
+    scan_parameter_sub = nh.subscribe("/scan/scan_parameter", 1000, &NodeHandle::scan_parameter_call, this);
 
     blackframe_pub = nh.advertise<sensor_msgs::Image>("/camera/black", 1);
     blackdis_pub = nh.advertise<std_msgs::Int32MultiArray>("/vision/BlackRealDis", 1);
@@ -59,6 +75,21 @@ void NodeHandle::Parameter_getting()
     nh.getParam("/FIRA/vision/Center/Horizon", HorizonMsg);
 
     nh.getParam("/FIRA/vision/HSV/Ball", HSV_red);
+
+    nh.getParam("/FIRA/vision/laser/scan_enable", scan_enable);
+    nh.getParam("/FIRA/vision/laser/scan_parameter", scan_parameter);
+    if(scan_parameter.size()>=9){
+        robot_angle_1 = scan_parameter.at(0);
+        robot_distance_1 = scan_parameter.at(1);
+        scan_angle_1 = scan_parameter.at(2);
+        robot_angle_2 = scan_parameter.at(3);
+        robot_distance_2 = scan_parameter.at(4);
+        scan_angle_2 = scan_parameter.at(5);
+        robot_angle_3 = scan_parameter.at(6);
+        robot_distance_3 = scan_parameter.at(7);
+        scan_angle_3 = scan_parameter.at(8);
+    }
+    
 }
 //======================前置處理結束=========================
 int NodeHandle::Frame_Area(int coordinate, int range)
@@ -87,6 +118,7 @@ void NodeHandle::SaveButton_setting(const vision::bin msg)
     //SaveButton = msg.bin;
     Parameter_getting();
 }
+//========================scan=============================
 void NodeHandle::scancall(const sensor_msgs::LaserScan msg){
     if(device_number<1)device_number=1;
     ranges.clear();
@@ -110,6 +142,28 @@ void NodeHandle::scancall4(const sensor_msgs::LaserScan msg){
     ranges4.clear();
     ranges4.assign(msg.ranges.begin(), msg.ranges.end());
     //cout<<"size: "<<ranges.size()<<endl;
+}
+void NodeHandle::scan_enable_call(const std_msgs::Int32MultiArray msg){
+    if(msg.data.size()>=3){
+        scan_enable.clear();
+        scan_enable.assign(msg.data.begin(), msg.data.end()); 
+    }
+}
+void NodeHandle::scan_parameter_call(const std_msgs::Int32MultiArray msg){
+    if(msg.data.size()>=9){
+        scan_parameter.clear();
+        scan_parameter.assign(msg.data.begin(), msg.data.end()); 
+        robot_angle_1 = scan_parameter.at(0);
+        robot_distance_1 = scan_parameter.at(1);
+        scan_angle_1 = scan_parameter.at(2);
+        robot_angle_2 = scan_parameter.at(3);
+        robot_distance_2 = scan_parameter.at(4);
+        scan_angle_2 = scan_parameter.at(5);
+        robot_angle_3 = scan_parameter.at(6);
+        robot_distance_3 = scan_parameter.at(7);
+        scan_angle_3 = scan_parameter.at(8);
+    }
+    
 }
 //========================distance=========================
 double NodeHandle::camera_f(double Omni_pixel)

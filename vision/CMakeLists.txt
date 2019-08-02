@@ -154,7 +154,7 @@ foreach(
     #blackItem
     black_item
     avoidance
-    razer
+    laser
 )
 add_subdirectory(${subdir})
 endforeach()

@@ -1,4 +1,4 @@
-#include "razer.h"
+#include "laser.h"
 
 void SigintHandler(int sig)
 {
@@ -8,7 +8,7 @@ void SigintHandler(int sig)
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "razer");
+    ros::init(argc, argv, "laser");
     ros::NodeHandle h_node;
     signal(SIGINT, SigintHandler);
     ros::Rate loop_rate(40); //program speed limit

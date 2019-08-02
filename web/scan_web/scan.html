@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" name="author" content="Minda">
+    <title>tb3_race</title>
+    <link rel="shortcut icon" href="img/turtle.png" />
+    <link rel="stylesheet" href="font-awesome-4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- jQuery UI-->
+    <link rel="stylesheet" href="jquery-ui-1.11.4/jquery-ui.css">
+    <!-- Javascript -->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="jquery-ui-1.11.4/jquery-ui.js"></script>
+    <script src="jquery-ui-1.11.4/jquery-ui.min.js"></script>
+
+
+    <script src="js/eventemitter2.min.js"></script>
+    <script src="js/ros/roslib.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"/> -->
+
+
+    <!-- =========================== Custom ============================ -->
+    <!-- css lib -->
+    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/bar.css">
+    <!-- js lib -->
+
+</head>
+
+<body>
+    <div class="modal-dialog Interface-Background Interface-Size Overflow">
+        <div class="modal-content">
+            <div class="modal-header">
+                <table class="WIDTH_100">
+                    <tr>
+                        <td>
+                            <h2 class="modal-title" id="Interface-Title">Scan_UI</h2>
+                        </td>
+                        <td>
+                            <div id="WifiButton">
+                                <i class="fa fa-3x fa-wifi" id="WifiButton-style" aria-hidden="true" data-toggle="modal"
+                                    data-target="#connect_Robot"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-body Interface-BodySize">
+                <div class="form-group" id="View-Window">
+                    <img id="player" src="img/offline.png">
+                </div>
+                <div id="scan_bar">
+                    <table class="WH_100">
+                        <tr>
+                            <th colspan="3">
+                                <div>
+                                    <input type="checkbox" id="Laser_1" name="LaserCheckElement" checked="true" onclick="PubScanEnable();" />
+                                    <label class="LaserButton" for="Laser_1">Laser_1</label>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot angle 1</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="0" oninput="showValue(this.value,'LaserTextElement',0);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="0"
+                                    oninput="rangeValue(this.value,'LaserBarElement',0);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot dis 1</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="50" value="15" oninput="showValue(this.value,'LaserTextElement',1);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="50" value="15"
+                                    oninput="rangeValue(this.value,'LaserBarElement',1);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>scan angle 1</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="0" oninput="showValue(this.value,'LaserTextElement',2);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="0"
+                                    oninput="rangeValue(this.value,'LaserBarElement',2);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">
+                                <div>
+                                    <input type="checkbox" id="Laser_2" name="LaserCheckElement" checked="true" onclick="PubScanEnable();" />
+                                    <label class="LaserButton" for="Laser_2">Laser_2</label>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot angle 2</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="120" oninput="showValue(this.value,'LaserTextElement',3);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="120"
+                                    oninput="rangeValue(this.value,'LaserBarElement',3);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot dis 2</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="50" value="15" oninput="showValue(this.value,'LaserTextElement',4);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="50" value="15"
+                                    oninput="rangeValue(this.value,'LaserBarElement',4);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>scan angle 2</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="0" oninput="showValue(this.value,'LaserTextElement',5);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="0"
+                                    oninput="rangeValue(this.value,'LaserBarElement',5);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">
+                                <div>
+                                    <input type="checkbox" id="Laser_3" name="LaserCheckElement" checked="true" onclick="PubScanEnable();" />
+                                    <label class="LaserButton" for="Laser_3">Laser_3</label>
+                                </div>
+                            </th>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot angle 3</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="240" oninput="showValue(this.value,'LaserTextElement',6);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="240"
+                                    oninput="rangeValue(this.value,'LaserBarElement',6);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>robot dis 3</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="50" value="15" oninput="showValue(this.value,'LaserTextElement',7);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="50" value="15"
+                                    oninput="rangeValue(this.value,'LaserBarElement',7);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="SliderLabel">
+                                <label>scan angle 3</label>
+                            </td>
+                            <td class="SliderBar">
+                                <input name="LaserBarElement" type="range" min="0" max="360" value="0" oninput="showValue(this.value,'LaserTextElement',8);PubScanParam();" />
+                            </td>
+                            <td class="SliderText">
+                                <input name="LaserTextElement" type="number" class="BarText" min="0" max="360" value="0"
+                                    oninput="rangeValue(this.value,'LaserBarElement',8);PubScanParam();" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <th >
+                                <div>
+                                    <input type="checkbox" id="View" onclick="Open_Camera();" />
+                                    <label class="LaserButton" for="View">View</label>
+                                </div>
+                            </th>
+                            <th class="Scan_Save">
+                                <input class="SaveButton" type="button" value="save" onclick="PubSaveButton();savecall();" />
+                            </th>
+                            <th></th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- wifi ui -->
+    <div class="modal fade Interface-Background" id="connect_Robot" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="WifiContent-style">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Connect To Robot</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="RobotIPDATA" class="control-label">Robot_IP:</label>
+                            <input name="RobotIPDATA" type="text" class="form-control" id="RobotIP" value=IP.textContent>
+                        </div>
+                        <div class="form-group">
+                            <label for="RobotHostDATA" class="control-label">Robot_Host:</label>
+                            <input name="RobotHostDATA" type="text" class="form-control" id="RobotHost" value=Host.textContent>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ros.close();">Close</button>
+                    <button type="button" class="btn btn-primary" id="send-message" onclick="RobotConnect();history.go(0);">Connect</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<footer>
+    <script>
+        $("#scan_bar").buttonset();
+    </script>
+    <script src="js/slider/SliderControl.js"></script>
+    <script src="js/ros/video.js"></script>
+    <!-- ros lib -->
+    <script src="js/ros/RobotConnect.js"></script>
+    <script src="js/ros/Rostopic.js"></script>
+    <script src="js/ros/RosParameter.js"></script>
+    <script src="js/ros/Rosservice.js"></script>
+</footer>
+
+</html>

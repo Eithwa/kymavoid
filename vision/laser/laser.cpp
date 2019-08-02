@@ -1,4 +1,4 @@
-#include "razer.h"
+#include "laser.h"
 #define DEG2RAD  M_PI/180
 Vision::Vision()
 {
@@ -71,7 +71,7 @@ void Vision::imageCb(const sensor_msgs::ImageConstPtr &msg)
     }
 }
 
-void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<double> ranges, Scalar color){
+void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, int laser_angle, vector<double> ranges, Scalar color){
     int center_x = visual_map.cols/2;
     int center_y = visual_map.rows/2;
     Point tf;
@@ -82,9 +82,9 @@ void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, vector<do
         //if(device_number<2){
         //    double black_angle = (double)270/ranges.size();
         //}
-        double black_angle = (double)180/ranges.size();
+        double black_angle = (double)270/ranges.size();
         for(int i=0; i<ranges.size(); i++){
-            double angle = black_angle*i+sensor_angle;
+            double angle = black_angle*i+sensor_angle-laser_angle;
             double distance = ranges.at(i)*100;
             double x = center_x+tf.x+distance*cos(angle*DEG2RAD);
             double y = center_y+tf.y-distance*sin(angle*DEG2RAD);
@@ -137,17 +137,23 @@ cv::Mat Vision::draw_interface()
     line(visual_map, Point(center_x, center_y), Point(center_x, center_y-robot_radius), Scalar(255,0,0), 1);
     //===========================
     //====draw the black item====
-    int sensor1_angle = 0;
-    int sensor1_distance = 15;
-    draw_scan(visual_map, sensor1_angle, sensor1_distance, ranges, Scalar(0,0,0));
+    if(scan_enable.at(0)==1){
+        //int sensor1_angle = 0;
+        //int sensor1_distance = 15;
+        draw_scan(visual_map, robot_angle_1, robot_distance_1, scan_angle_1, ranges, Scalar(0,0,0));
+    }
     //============
-    int sensor2_angle = 243;
-    int sensor2_distance = 12;
-    draw_scan(visual_map, sensor2_angle, sensor2_distance, ranges2, Scalar(0,0,0));
+    if(scan_enable.at(1)==1){
+        //int sensor2_angle = 243;
+        //int sensor2_distance = 12;
+        draw_scan(visual_map, robot_angle_2, robot_distance_2, scan_angle_2, ranges2, Scalar(0,0,0));
+    }
     //============
-    int sensor3_angle = 120;
-    int sensor3_distance = 15;
-    draw_scan(visual_map, sensor3_angle, sensor3_distance, ranges3, Scalar(0,0,0));
+    if(scan_enable.at(2)==1){
+        //int sensor3_angle = 120;
+        //int sensor3_distance = 15;
+        draw_scan(visual_map, robot_angle_3, robot_distance_3, scan_angle_3, ranges3, Scalar(0,0,0));
+    }
     //============
     //int sensor4_angle = 270;
     //int sensor4_distance = 15;
@@ -210,8 +216,8 @@ cv::Mat Vision::draw_interface()
         }    
     }
     //===============
-    imshow("visual_map", visual_map);
-    waitKey(10);
+    //imshow("visual_map", visual_map);
+    //waitKey(10);
     Pub_blackdis(blackItem);
     Pub_blackframe(visual_map);
     //Pub_avoidframe(visual_map);

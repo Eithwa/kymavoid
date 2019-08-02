@@ -77,6 +77,19 @@ class NodeHandle
     vector<double> ranges2;
     vector<double> ranges3;
     vector<double> ranges4;
+
+    int robot_angle_1;
+    int robot_distance_1;
+    int scan_angle_1;
+    int robot_angle_2;
+    int robot_distance_2;
+    int scan_angle_2;
+    int robot_angle_3;
+    int robot_distance_3;
+    int scan_angle_3;
+    vector <int> scan_enable;
+    vector <int> scan_parameter;
+
     int device_number;
 
     ros::Publisher mpicture;
@@ -90,10 +103,14 @@ class NodeHandle
     ros::Subscriber scan_sub2;
     ros::Subscriber scan_sub3;
     ros::Subscriber scan_sub4;
+    ros::Subscriber scan_enable_sub;
+    ros::Subscriber scan_parameter_sub;
 
     void SaveButton_setting(const vision::bin msg);
     void scancall(const sensor_msgs::LaserScan msg);
     void scancall2(const sensor_msgs::LaserScan msg);
     void scancall3(const sensor_msgs::LaserScan msg);
     void scancall4(const sensor_msgs::LaserScan msg);
+    void scan_enable_call(const std_msgs::Int32MultiArray msg);
+    void scan_parameter_call(const std_msgs::Int32MultiArray msg);
 };

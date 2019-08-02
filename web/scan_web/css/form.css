@@ -1,0 +1,148 @@
+/*===========================================*/
+/* basic */
+.WIDTH_100{
+    width: 100%;
+}
+
+.WH_100{
+    width: 100%;
+    height: 100%;
+}
+/*===========================================*/
+
+
+/* Interface form*/
+
+.Interface-Background {
+    background-color: rgba(255, 255, 255, 0.3);
+    background-size: cover;
+}
+
+.Interface-Size {
+    position: relative;
+    height: 1000px;
+    width: 800px;
+}
+
+.Interface-BodySize {
+    height: 920px;
+}
+
+#WifiButton {
+    /* position: relative;
+    top: 0%; */
+    text-align: center;
+}
+
+#WifiButton-style {
+    color: rgba(255, 0, 0, 1);
+    background-color: #67c7ef;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 0, 0, .2);
+}
+
+
+/*===========================================*/
+
+
+/* wifi ui */
+
+.WifiContent-style {
+    position: relative;
+    background-color: #FFFFFF;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #999;
+    /* border: 1px solid rgba(0, 0, 0, .2); */
+    border-radius: 6px;
+    outline: 0;
+    -webkit-box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+    box-shadow: 0 3px 9px rgba(0, 0, 0, .5);
+}
+
+
+/*===========================================*/
+/* view */
+
+#View-Window {
+    position: relative;
+    top: 0%;
+    left: 15%;
+    height: 500px;
+    width: 500px;
+    background-color: rgba(0, 0, 0);
+}
+
+#player {
+    height: 100%;
+    width: 100%;
+}
+
+/*===========================================*/
+/* scan bar */
+#scan_bar{
+    position: relative;
+    top: 0%;
+    left: 8%;
+    height: 320px;
+    width: 640px;
+    /* border: 1px solid #000; */
+    text-align: left;
+}
+
+.SliderLabel {
+    width: 80px;
+}
+.SliderBar {
+    width: 220px;
+}
+.SliderText {
+    width: 50px;
+    text-align: center;
+}
+
+.Scan_Save {
+    text-align: center;
+}
+
+.BarText{
+    width: 60px;
+}
+
+/*===========================================*/
+/* scan button */
+.LaserButton {
+    background-image: none;
+    font-size: 14px;
+    color: #663D00;
+    border-radius: 3px;
+}
+
+.LaserButton.ui-state-active {
+    background-color: #FFCC00;
+    font-size: 14px;
+    color: #1A1A65;
+    border-radius: 3px;
+}
+
+.SaveButton {
+    background-image: none;
+    font-size: 14px;
+    color: #663D00;
+    border-radius: 3px;
+}
+
+.SaveButton.ui-state-active {
+    background-color: #FFCC00;
+    font-size: 14px;
+    color: #1A1A65;
+    border-radius: 3px;
+}
+
+.SaveButton.ui-state-focus{
+    background-image: none;
+    background-color: #FFFFFF;
+    font-size: 14px;
+    color: #663D00;
+    border-radius: 3px;
+}

@@ -70,6 +70,7 @@ void NodeHandle::Parameter_getting()
     nh.getParam("/FIRA/vision/Center/Center_Y", CenterYMsg);
     nh.getParam("/FIRA/vision/Center/Inner", InnerMsg);
     nh.getParam("/FIRA/vision/Center/Outer", OuterMsg);
+    //std::cout<<"OuterMsg  "<<OuterMsg<<endl;
     nh.getParam("/FIRA/vision/Center/Front", FrontMsg);
     nh.getParam("/FIRA/vision/Center/Camera_high", Camera_HighMsg);
     nh.getParam("/FIRA/vision/Center/Horizon", HorizonMsg);

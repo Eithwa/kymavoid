@@ -78,11 +78,12 @@ void draw_scan(Mat &visual_map, int sensor_angle, int sensor_distance, int laser
     tf.x = sensor_distance*cos((sensor_angle+90)*DEG2RAD);
     tf.y = -sensor_distance*sin((sensor_angle+90)*DEG2RAD);
     circle(visual_map, Point(center_x+tf.x, center_y+tf.y), 4, Scalar(255,0,0), -1);
+    int scan_range = 180;
     if(ranges.size()>0){
         //if(device_number<2){
         //    double black_angle = (double)270/ranges.size();
         //}
-        double black_angle = (double)270/ranges.size();
+        double black_angle = (double)scan_range/ranges.size();
         for(int i=0; i<ranges.size(); i++){
             double angle = black_angle*i+sensor_angle-laser_angle;
             double distance = ranges.at(i)*100;
@@ -296,6 +297,7 @@ void Vision::red_line()
     int center_outer = OuterMsg;
     int center_x = CenterXMsg;
     int center_y = CenterYMsg;
+    //std::cout<<"OuterMsg  "<<OuterMsg<<endl;
 
     for (int angle = 0; angle < 360; angle = angle + black_angle)
     {
@@ -318,7 +320,7 @@ void Vision::red_line()
              && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 1] == 0 
              && binarization_map.data[(image_y * binarization_map.cols + image_x) * 3 + 2] == 0)
             {
-                red_line_distance.push_back(hypot(dis_x, dis_y));
+                redItem_pixel.push_back(hypot(dis_x, dis_y));
                 break;
             }
             else
@@ -329,7 +331,7 @@ void Vision::red_line()
             }
             if (r >= center_outer)
             {
-                red_line_distance.push_back(hypot(999, 999));
+                redItem_pixel.push_back(hypot(999, 999));
             }
         }
     }

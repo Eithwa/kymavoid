@@ -504,10 +504,10 @@ void FIRA_pathplan_class::RoutePlan(ScanInfo &THIS){
     }
     //std::cout<<"closest_angle    "<<closest_angle<<std::endl;
     if(closest_angle>0 && closest_angle<119 ){
-        if(closest_angle>THIS.move_main){
+        if(closest_angle>THIS.move_main && fabs(closest_angle-THIS.move_main)<25){
             THIS.move_main = THIS.move_main-fabs(closest_angle-THIS.move_main);
         }
-        else if(closest_angle<THIS.move_main){
+        else if(closest_angle<THIS.move_main && fabs(closest_angle-THIS.move_main)<25){
             THIS.move_main = THIS.move_main+fabs(closest_angle-THIS.move_main);
         }
     }
@@ -544,7 +544,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     fb_error=FB_x;
     int r_place_x = -FB_XX*100;
     r_place_x= (r_place_x==0)?very_small:r_place_x;
-    //  main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
+    main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;
 
     //<<<<<<<<<<<<<<<<<<<<<HEAD  Outer dynamic window<<<<<<<<<<<<<<<<<<<<<
     //main_vec = (90-(atan2(150,r_place_x)*180/pi)/3)+1;//? 60前方(180度) 30 (90度) 90(270度)

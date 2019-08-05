@@ -932,11 +932,12 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         printf("人工勢場 S/N========  ");
         break;
     case box_in_between:
-
-        if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
+        
+        //if(left_dis_average < right_dis_average){//走在兩個箱子正中間 如果遇到兩邊箱子不平行會撞到?
+        if(left_closest_dis < right_closest_dis){
             //final_angle = 90-(90-(right_dis_average-left_dis_average))/3;//turn right
             final_angle = good_angle+3;
-        }else if(left_dis_average > right_dis_average){
+        }else if(left_closest_dis > right_closest_dis){
             //final_angle = 90-(90+(left_dis_average-right_dis_average))/3;//turn left
             final_angle = good_angle-3;
         }else{

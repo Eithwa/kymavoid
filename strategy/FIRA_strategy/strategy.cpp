@@ -117,7 +117,7 @@ int main(int argc, char **argv)
     mNodeHandle.setOpponent(isOpponent);
     mNodeHandle.on_init();
 
-    ros::Rate loop_rate(35);
+    ros::Rate loop_rate(50);
 
     //bool isOpponent  = false;
     //FIRA_teamStrategy_class mteam;
@@ -144,8 +144,13 @@ int main(int argc, char **argv)
     //return 0;
     while(ros::ok())
     {
-        mpathplan.loadParam(mNodeHandle.getNodeHandle());
-        mbehavior.loadParam(mNodeHandle.getNodeHandle());
+        static double StartTime = ros::Time::now().toSec();
+        double EndTime = ros::Time::now().toSec();
+        if(EndTime-StartTime>0.1){
+            mpathplan.loadParam(mNodeHandle.getNodeHandle());
+            mbehavior.loadParam(mNodeHandle.getNodeHandle());
+            StartTime = EndTime;
+        }
         //mpathplan.teamColor = mNodeHandle.getTeamColor();	//yo
         global_env->teamcolor = mNodeHandle.getTeamColor();
         if(global_env->teamcolor == "Blue")Team_color = Team_Blue;

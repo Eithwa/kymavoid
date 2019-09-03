@@ -581,7 +581,7 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     int hole_size = (int)(outer.max_vacancy_number==0)?0:hypot(x1-x2,y1-y2);
     //std::cout<<"遠洞口寬度 "<<hole_size<<"cm"<<std::endl;
 
-    if(outer.max_vacancy_number==0||hole_size<40){
+    if(outer.max_vacancy_number==0||hole_size<50){
         outer.scan_left=(main_vec-30-10<(30-10))?(30-10):main_vec-30-10;
         outer.scan_right=(main_vec+30+10>(90+10))?(90+10):main_vec+30+10;
         RoutePlan(outer);
@@ -1023,7 +1023,21 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
         if((forward_dis_average>100)&&(HowManyBoj<=1)&&((40<main_vec)&&(main_vec<80))/*||(condition==box_in_between)*/){
             v_fast=v_fast+5;v_fast=(v_fast<100)?v_fast:100;
         }else{
-            v_fast=80;
+            //v_fast=80;
+            v_fast = v_fast+1;
+            //==================
+            //final_angle = good_angle;
+            int search_min=final_angle-20;
+            int search_max=final_angle+20;
+            for(int i=search_min; i<search_max; i++){
+                int center_distance = env.blackdis[i]*sin(fabs((i-final_angle)*3)*DEG2RAD);
+                double search_distace = speed*2;
+                if(min_speed>10)search_distace = speed*2.5;
+                if(env.blackdis[i]<search_distace && env.blackdis[i]>0 && center_distance<22){
+                    v_fast = 1;
+                }
+            }
+            //==================
             if(condition!=box_in_between && pre_condition==box_in_between){
                 v_fast = 1;
             }
@@ -1031,7 +1045,10 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
             int angle_min = (final_angle-8>0)?final_angle-8:0;
             int angle_max = (final_angle+8<118)?final_angle+8:118;
             for(int i=angle_min; i<angle_max; i++){
-                if(env.blackdis[i]<80)v_fast=v_fast-5;
+                if(env.blackdis[i]<80){
+                    v_fast=v_fast-5;
+                    if(v_fast<1)v_fast=1;
+                }
                 if(v_fast<1)v_fast=1;
                 // if(env.blackdis[i]<close_dis&&condition!=box_in_between){
                 //     v_fast=1;
@@ -1058,8 +1075,8 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
                     }
                 }
                 if(speed_up_flag==true){
-                    v_fast=80;
-                    //v_fast=(v_fast+5<80)?v_fast+5:80;
+                    //v_fast=80;
+                    v_fast=(v_fast+5<80)?v_fast+5:80;
                 }
             }
         }
@@ -1077,6 +1094,25 @@ void FIRA_pathplan_class::strategy_AvoidBarrier(int Robot_index){
     //if(not_good_p>20)v_fast = 0;
     v_fast=(avoid_go==0)?0:v_fast;
     FB_XX=(avoid_go==0)?0:FB_XX;
+    //==========speed test==============
+    /*final_angle = 60;
+    v_fast = 100;
+    double min_distance=999;
+    double buffer = speed*1.3;
+    if(buffer<30)buffer = 30;
+    for(int i=50; i<70; i++){
+        double distance = env.blackdis[i]-robot_radius;
+        if(distance<buffer){
+            v_fast=0;
+            //std::cout<<"fuckkkkkkkkkkk\n";
+            if(distance < min_distance){
+                min_distance = distance;
+            }
+        }
+    }
+    std::cout<<"最小距離！！！！  "<<min_distance<<std::endl;
+    v_fast=(avoid_go==0)?0:v_fast;*/
+    //==================================
     motor_place(v_fast,final_angle,r_number);
     printf("v_fast=%d\n",v_fast);
     printf("ave_gray=%d\n",env.gray_ave);

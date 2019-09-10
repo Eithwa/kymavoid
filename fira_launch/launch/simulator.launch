@@ -6,4 +6,5 @@
  <node name="mjpeg_server" pkg="mjpeg_server" type="mjpeg_server" respawn="true" respawn_delay="5"/>
  <node name="avoidance" pkg="vision" type="avoidance" respawn="true" respawn_delay="1"/>
  <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" />
+ <include file="$(find nubot_gazebo)/launch/avoid_robot.launch" />
 </launch>
